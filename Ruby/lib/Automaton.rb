@@ -43,6 +43,63 @@ class Automaton
     def countSymbols
         return @alphabet.length
     end
+
+    def addState(state)
+        if state.class != Integer || hasState(state)
+            return false
+        end
+        @states.add(state)
+        return true
+    end
+
+    def removeState(state)
+        if state.class != Integer || !hasState(state)
+            return false
+        end
+        @states.delete(state)
+        return true
+    end
+
+    def hasState(state)
+        if state.class != Integer
+            return false
+        end
+        return @states.include?(state)
+    end
+
+    def countStates
+        return @states.length
+    end
+
+    def setStateInitial(state)
+        if state.class != Integer || !hasState(state)
+            return
+        end
+        @initial.add(state)
+    end
+
+    def isStateInitial(state)
+        if state.class != Integer || !hasState(state)
+            return false
+        end
+        return @initial.include?(state)
+    end
+
+    def setStateFinal(state)
+        if state.class != Integer || !hasState(state)
+            return
+        end
+        @final.add(state)
+    end
+
+    def isStateFinal(state)
+        if state.class != Integer || !hasState(state)
+            return false
+        end
+        return @final.include?(state)
+    end
+
+
 end
 
 class String
