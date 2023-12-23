@@ -45,7 +45,7 @@ class Automaton
     end
 
     def addState(state)
-        if state.class != Integer || hasState(state)
+        if state.class != Integer || hasState(state) || state < 0
             return false
         end
         @states.add(state)
@@ -71,14 +71,14 @@ class Automaton
         return @states.length
     end
 
-    def setStateInitial(state)
+    def setInitialState(state)
         if state.class != Integer || !hasState(state)
             return
         end
         @initial.add(state)
     end
 
-    def isStateInitial(state)
+    def isInitialState(state)
         if state.class != Integer || !hasState(state)
             return false
         end
@@ -92,13 +92,64 @@ class Automaton
         @final.add(state)
     end
 
-    def isStateFinal(state)
+    def isFinalState(state)
         if state.class != Integer || !hasState(state)
             return false
         end
         return @final.include?(state)
     end
 
+    def addTransition(from, alpha, to)
+        if !from.is_a?(Integer) || !alpha.is_a?(String) || !to.is_a?(Integer) || !hasState(from) || !hasState(to) || (!hasSymbol(alpha) && alpha != Epsilon) || hasTransition(from, alpha, to)
+            return false
+        end
+        if !transition.key?(from)
+            transition[from] = {}
+        end
+        if !transition[from].key?(alpha)
+            transition[from][alpha] = Set.new()
+        end
+        transition[from][alpha].add(to)
+        return true
+    end
+
+    def removeTransition(from, alpha, to)
+        if from.class != Integer || alpha.class != String || to.class != Integer || !hasState(from) || !hasState(to) || (!hasSymbol(alpha) && alpha != Epsilon) || !hasTransition(from, alpha, to)
+            return false
+        end
+        if alpha == Epsilon
+            transition[from].delete(alpha)
+            return true
+        end
+        if transition[from][alpha].include?(to)
+            transition[from][alpha].delete(to)
+            return true
+        end
+        return false
+    end
+
+    def hasTransition(from, alpha, to)
+        if from.class != Integer || alpha.class != String || to.class != Integer  || !hasState(from) || !hasState(to) || (!hasSymbol(alpha) && alpha != Epsilon) || transition.length == 0
+            return false
+        end
+        if !transition.key?(from) || !transition[from].key?(alpha)
+            return false
+        end
+        if alpha == Epsilon
+            return transition[from].key?(alpha)
+        end
+        return transition[from][alpha].include?(to)
+    end
+
+    def countTransitions()
+        count = 0
+        @transition.each do |from, alpha|
+            alpha.each do |alpha, to|
+                count += to.length
+            end
+        end
+        return count
+    end
 
 end
 
@@ -109,3 +160,10 @@ class String
         false
     end
 end
+
+# h = {}
+# h[0] = {}
+# h[0][Automaton::Epsilon] = Set.new()
+# h[0][Automaton::Epsilon].add(1)
+# puts h
+# puts h[0].key?(Automaton::Epsilon)
