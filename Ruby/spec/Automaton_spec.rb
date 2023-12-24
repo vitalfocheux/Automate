@@ -23,23 +23,23 @@ RSpec.describe Automaton do
         end
     end
 
-    # describe "isValid" do
-    #     it "noSymbol and withState" do
-    #         expect(@a.addState(0)).to eq(true)
-    #         expect(@a.isValid()).to eq(false)
-    #         expect(@a.hasState(0)).to eq(true)
-    #     end
-    # end
+    describe "isValid" do
+        it "noSymbol and withState" do
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.isValid()).to eq(false)
+            expect(@a.hasState(0)).to eq(true)
+        end
+    end
 
-    # describe "isValid" do
-    #     it "withSymbol and withState" do
-    #         expect(@a.addSymbol("a")).to eq(true)
-    #         expect(@a.addState(0)).to eq(true)
-    #         expect(@a.isValid()).to eq(true)
-    #         expect(@a.hasSymbol("a")).to eq(true)
-    #         expect(@a.hasState(0)).to eq(true)
-    #     end
-    # end
+    describe "isValid" do
+        it "withSymbol and withState" do
+            expect(@a.addSymbol("a")).to eq(true)
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.isValid()).to eq(true)
+            expect(@a.hasSymbol("a")).to eq(true)
+            expect(@a.hasState(0)).to eq(true)
+        end
+    end
 
     describe "addSymbol" do
         it "Epsilon" do
@@ -169,17 +169,17 @@ RSpec.describe Automaton do
         end
     end
 
-    # describe "removeSymbol" do
-    #     it "symbolInTransition" do
-    #         expect(@a.addSymbol("a")).to eq(true)
-    #         expect(@a.addState(0)).to eq(true)
-    #         expect(@a.addState(1)).to eq(true)
-    #         expect(@a.addTransition(0, "a", 1)).to eq(true)
-    #         expect(@a.removeSymbol("a")).to eq(false)
-    #         expect(@a.hasSymbol("a")).to eq(true)
-    #         expect(@a.countSymbols()).to eq(1)
-    #     end
-    # end
+    describe "removeSymbol" do
+        it "symbolInTransition" do
+            expect(@a.addSymbol("a")).to eq(true)
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addTransition(0, "a", 1)).to eq(true)
+            expect(@a.removeSymbol("a")).to eq(true)
+            expect(@a.hasSymbol("a")).to eq(false)
+            expect(@a.countSymbols()).to eq(0)
+        end
+    end
 
     describe "hasSymbol" do
         it "Empty" do
@@ -303,51 +303,51 @@ RSpec.describe Automaton do
             end
         end
 
-        # it "OriginInTransition" do
-        #     expect(@a.addState(0)).to eq(true)
-        #     expect(@a.addState(1)).to eq(true)
-        #     expect(@a.addSymbol("a")).to eq(true)
-        #     expect(@a.addTransition(0, "a", 1)).to eq(true)
-        #     expect(@a.removeState(0)).to eq(false)
-        #     expect(@a.hasState(0)).to eq(false)
-        #     expect(@a.hasState(1)).to eq(true)
-        #     expect(@a.countStates()).to eq(1)
-        #     expect(@a.hasSymbol("a")).to eq(true)
-        #     expect(@a.countSymbols()).to eq(1)
-        #     expect(@a.hasTransition(0, 'a', 1))
-        #     expect(@a.countTransitions()).to eq(0)
-        # end
+        it "OriginInTransition" do
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol("a")).to eq(true)
+            expect(@a.addTransition(0, "a", 1)).to eq(true)
+            expect(@a.removeState(0)).to eq(true)
+            expect(@a.hasState(0)).to eq(false)
+            expect(@a.hasState(1)).to eq(true)
+            expect(@a.countStates()).to eq(1)
+            expect(@a.hasSymbol("a")).to eq(true)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.hasTransition(0, 'a', 1)).to eq(false)
+            expect(@a.countTransitions()).to eq(0)
+        end
 
-        # it "DestinationInTransition" do
-        #     expect(@a.addState(0)).to eq(true)
-        #     expect(@a.addState(1)).to eq(true)
-        #     expect(@a.addSymbol("a")).to eq(true)
-        #     expect(@a.addTransition(0, "a", 1)).to eq(true)
-        #     expect(@a.removeState(1)).to eq(true)
-        #     expect(@a.hasState(0)).to eq(true)
-        #     expect(@a.hasState(1)).to eq(false)
-        #     expect(@a.countStates()).to eq(1)
-        #     expect(@a.hasSymbol("a")).to eq(true)
-        #     expect(@a.countSymbols()).to eq(1)
-        #     expect(@a.hasTransition(0, 'a', 1)).to eq(false)
-        #     expect(@a.countTransitions()).to eq(0)
-        # end
+        it "DestinationInTransition" do
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol("a")).to eq(true)
+            expect(@a.addTransition(0, "a", 1)).to eq(true)
+            expect(@a.removeState(1)).to eq(true)
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.hasState(1)).to eq(false)
+            expect(@a.countStates()).to eq(1)
+            expect(@a.hasSymbol("a")).to eq(true)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.hasTransition(0, 'a', 1)).to eq(false)
+            expect(@a.countTransitions()).to eq(0)
+        end
 
-        # it "OriginAndDestinationInTransition" do
-        #     expect(@a.addState(0)).to eq(true)
-        #     expect(@a.addState(1)).to eq(true)
-        #     expect(@a.addSymbol("a")).to eq(true)
-        #     expect(@a.addTransition(0, "a", 1)).to eq(true)
-        #     expect(@a.removeState(0)).to eq(true)
-        #     expect(@a.removeState(1)).to eq(true)
-        #     expect(@a.hasState(0)).to eq(false)
-        #     expect(@a.hasState(1)).to eq(false)
-        #     expect(@a.countStates()).to eq(0)
-        #     expect(@a.hasSymbol("a")).to eq(true)
-        #     expect(@a.countSymbols()).to eq(1)
-        #     expect(@a.hasTransition(0, 'a', 1)).to eq(false)
-        #     expect(@a.countTransitions()).to eq(0)
-        # end
+        it "OriginAndDestinationInTransition" do
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol("a")).to eq(true)
+            expect(@a.addTransition(0, "a", 1)).to eq(true)
+            expect(@a.removeState(0)).to eq(true)
+            expect(@a.removeState(1)).to eq(true)
+            expect(@a.hasState(0)).to eq(false)
+            expect(@a.hasState(1)).to eq(false)
+            expect(@a.countStates()).to eq(0)
+            expect(@a.hasSymbol("a")).to eq(true)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.hasTransition(0, 'a', 1)).to eq(false)
+            expect(@a.countTransitions()).to eq(0)
+        end
     end
 
     describe "hasState" do

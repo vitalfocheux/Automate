@@ -30,6 +30,11 @@ class Automaton
             return false
         end
         @alphabet.delete(symbol)
+        transition.each do |from|
+            if transition.key?(from) && transition[from].key?(symbol)
+                transition[from].delete(symbol)
+            end
+        end
         return true
     end
 
@@ -57,6 +62,14 @@ class Automaton
             return false
         end
         @states.delete(state)
+        transition.each do |from, key|
+            if transition.key?(from)
+                transition.delete(from)
+            end
+            if transition.key?(state) && transition[state].key?(key) && transition[state][key].include?(from)
+                transition[state][key].delete(from)
+            end
+        end
         return true
     end
 
