@@ -727,4 +727,5 @@ RSpec.describe Automaton do
             expect(@a.countSymbols()).to eq(1)
             expect(@a.countTransitions()).to eq(0)
         end
+    end
 end

@@ -189,6 +189,15 @@ class Automaton
             end
         end
     end
+
+    def hasEpsilonTransition
+        @transition.each do |from, alpha|
+            if alpha.key?(Epsilon)
+                return true
+            end
+        end
+        return false
+    end
 end
 
 class String
