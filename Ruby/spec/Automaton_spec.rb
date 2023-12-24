@@ -394,7 +394,7 @@ RSpec.describe Automaton do
         it "ToFinalAndInitial" do
             expect(@a.addState(0)).to eq(true)
             @a.setInitialState(0)
-            @a.setStateFinal(0)
+            @a.setFinalState(0)
             expect(@a.hasState(0)).to eq(true)
             expect(@a.isInitialState(0)).to eq(true)
             expect(@a.isFinalState(0)).to eq(true)
@@ -427,7 +427,7 @@ RSpec.describe Automaton do
     describe "setFinalState" do
         it "oneFinalState" do
             expect(@a.addState(0)).to eq(true)
-            @a.setStateFinal(0)
+            @a.setFinalState(0)
             expect(@a.hasState(0)).to eq(true)
             expect(@a.isFinalState(0)).to eq(true)
             expect(@a.countStates()).to eq(1)
@@ -436,8 +436,8 @@ RSpec.describe Automaton do
         it "twoFinalStates" do
             expect(@a.addState(0)).to eq(true)
             expect(@a.addState(1)).to eq(true)
-            @a.setStateFinal(0)
-            @a.setStateFinal(1)
+            @a.setFinalState(0)
+            @a.setFinalState(1)
             expect(@a.hasState(0)).to eq(true)
             expect(@a.hasState(1)).to eq(true)
             expect(@a.isFinalState(0)).to eq(true)
@@ -447,7 +447,7 @@ RSpec.describe Automaton do
 
         it "UnknownState" do
             expect(@a.addState(0)).to eq(true)
-            @a.setStateFinal(1)
+            @a.setFinalState(1)
             expect(@a.hasState(0)).to eq(true)
             expect(@a.hasState(1)).to eq(false)
             expect(@a.isFinalState(0)).to eq(false)
@@ -457,7 +457,7 @@ RSpec.describe Automaton do
 
         it "ToFinalAndInitial" do
             expect(@a.addState(0)).to eq(true)
-            @a.setStateFinal(0)
+            @a.setFinalState(0)
             @a.setInitialState(0)
             expect(@a.hasState(0)).to eq(true)
             expect(@a.isFinalState(0)).to eq(true)
@@ -609,6 +609,32 @@ RSpec.describe Automaton do
             expect(@a.countStates()).to eq(2)
             expect(@a.countSymbols()).to eq(0)
             expect(@a.countTransitions()).to eq(1)
+        end
+    end
+
+    describe "prettyPrint" do
+        it "test" do
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addState(2)).to eq(true)
+            expect(@a.addState(3)).to eq(true)
+            expect(@a.addState(4)).to eq(true)
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(1)
+            @a.setFinalState(4)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'b', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+            @a.prettyPrint("prettyPrint.txt")
         end
     end
 

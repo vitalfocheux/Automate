@@ -98,7 +98,7 @@ class Automaton
         return @initial.include?(state)
     end
 
-    def setStateFinal(state)
+    def setFinalState(state)
         if state.class != Integer || !hasState(state)
             return
         end
@@ -164,6 +164,31 @@ class Automaton
         return count
     end
 
+    def prettyPrint(file)
+        File.open(file, "w") do |f|
+            f.write("Initial states\n\t")
+            @initial.each do |state|
+                f.write("#{state} ")
+            end
+            f.write("\nFinal states\n\t")
+            @final.each do |state|
+                f.write("#{state} ")
+            end
+            f.write("\nTransitions:\n")
+            @states.each do |state|
+                f.write("\tFor state #{state}:\n")
+                @alphabet.each do |alpha|
+                    f.write("\t\tFor letter #{alpha}: ")
+                    if @transition.key?(state) && @transition[state].key?(alpha)
+                        @transition[state][alpha].each do |to|
+                            f.write("#{to} ")
+                        end
+                    end
+                    f.write("\n")
+                end
+            end
+        end
+    end
 end
 
 class String
