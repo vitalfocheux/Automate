@@ -638,4 +638,93 @@ RSpec.describe Automaton do
         end
     end
 
+    describe "hasEpsilonTransition" do
+        it "WithoutEpsilon" do
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.hasEpsilonTransition()).to eq(false)
+
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.hasState(1)).to eq(true)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.countStates()).to eq(2)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.countTransitions()).to eq(0)
+        end
+
+        it "WithEpsilon" do
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addState(2)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @a.setFinalState(2)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(1, Automaton::Epsilon, 2)).to eq(true)
+            expect(@a.hasEpsilonTransition()).to eq(true)
+
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.hasState(1)).to eq(true)
+            expect(@a.hasState(2)).to eq(true)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.hasTransition(0, 'a', 1)).to eq(true)
+            expect(@a.hasTransition(1, Automaton::Epsilon, 2)).to eq(true)
+            expect(@a.countStates()).to eq(3)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.countTransitions()).to eq(2)
+        end
+
+        it "Twice" do
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addState(2)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @a.setFinalState(2)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addTransition(0, Automaton::Epsilon, 1)).to eq(true)
+            expect(@a.addTransition(1, Automaton::Epsilon, 2)).to eq(true)
+            expect(@a.hasEpsilonTransition()).to eq(true)
+
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.hasState(1)).to eq(true)
+            expect(@a.hasState(2)).to eq(true)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.hasTransition(0, Automaton::Epsilon, 1)).to eq(true)
+            expect(@a.hasTransition(1, Automaton::Epsilon, 2)).to eq(true)
+            expect(@a.countStates()).to eq(3)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.countTransitions()).to eq(2)
+        end
+
+        it "AddAndRemove" do
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addTransition(0, Automaton::Epsilon, 1)).to eq(true)
+            expect(@a.hasEpsilonTransition()).to eq(true)
+
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.hasState(1)).to eq(true)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.hasTransition(0, Automaton::Epsilon, 1)).to eq(true)
+            expect(@a.countStates()).to eq(2)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.countTransitions()).to eq(1)
+
+            expect(@a.removeTransition(0, Automaton::Epsilon, 1)).to eq(true)
+            expect(@a.hasEpsilonTransition()).to eq(false)
+
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.hasState(1)).to eq(true)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.hasTransition(0, Automaton::Epsilon, 1)).to eq(false)
+            expect(@a.countStates()).to eq(2)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.countTransitions()).to eq(0)
+        end
 end
