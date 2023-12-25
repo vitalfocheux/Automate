@@ -191,6 +191,7 @@ class Automaton
     end
 
     def hasEpsilonTransition
+        raise "Automaton isn't valid" unless self.isValid()
         @transition.each do |from, alpha|
             if alpha.key?(Epsilon)
                 return true
@@ -200,11 +201,35 @@ class Automaton
     end
 
     def isDeterministic
-        return false
+        raise "Automaton isn't valid" unless self.isValid()
+        if @initial.length != 1
+            return false
+        end
+        @transition.each do |from, alpha|
+            if @transition.key?(from) && @transition[from].key?(alpha) && @transition[from][alpha].length > 1
+                return false
+            end
+        end
+        return true
     end
 
     def isComplete
-        return false
+        raise "Automaton isn't valid" unless self.isValid()
+        @states.each do |state|
+            if !@transition.key?(state)
+                return false
+            end
+            size = 0
+            @alphabet.each do |alpha|
+                if @transition[state].key?(alpha) && @transition[state][alpha].length > 0
+                    size += 1
+                end
+            end
+            if size != @alphabet.length
+                return false
+            end
+        end
+        return true
     end
 
     def makeTransition(origin, alpha)
@@ -240,15 +265,99 @@ class Automaton
     end
 
     def self.createMirror(automaton)
-        return Automaton.new()
+        raise "Automaton isn't valid" unless automaton.isValid()
+        @fa = Automaton.new()
+        @fa.alphabet = automaton.alphabet
+        @fa.state = automaton.state
+
+        automaton.states.each do |state|
+            if automaton.isInitialState(state)
+                @fa.setFinalState(state)
+            end
+            if automaton.isFinalState(state)
+                @fa.setInitialState(state)
+            end
+        end
+
+        automaton.transition.each do |from, alpha|
+            if automaton.key?(from) && automaton[from].key?(alpha)
+                automaton[from][alpha].each do |to|
+                    @fa.addTransition(to, alpha, from)
+                end
+            end
+        end
+
+        return @fa
     end
 
     def self.createComplete(automaton)
-        return Automaton.new()
+        raise "Automaton isn't valid" unless automaton.isValid()
+        if automaton.isLanguageEmpty()
+            @base = Automaton.new()
+            @base.alphabet = automaton.alphabet
+            @base.addState(0)
+            @base.setInitialState(0)
+            @alphabet.each do |alpha|
+                @base.addTransition(0, alpha, 0)
+            end
+            return @base
+        end
+
+        if automaton.isComplete()
+            return automaton
+        end
+
+        @fa = automaton
+        trash = 0
+        size = automaton.states.length
+
+        size.times do |i|
+            trash = i
+            if @fa.hasState(i)
+                break
+            end
+        end
+
+        if trash == size-1
+
+            if size-1 == 0 && !fa.hasState(0)
+                trash = 0
+            else
+                trash = size
+            end
+        end
+
+        @fa.addState(trash)
+
+        @fa.alphabet.each do |alpha|
+            @fa.addTransition(trash, alpha, trash)
+        end
+
+        @fa.states.each do |state|
+            @fa.alphabet.each do |alpha|
+                if !@fa.transition.key?(state) || !@fa.transition[state].key?(alpha) || @fa.transition[state][alpha].length == 0
+                    @fa.addTransition(state, alpha, trash)
+                end
+            end
+        end
+
+        return @fa
     end
 
     def self.createComplement(automaton)
-        return Automaton.new()
+        raise "Automaton isn't valid" unless automaton.isValid()
+
+        @fa = createComplete(createDeterministic(automaton))
+
+        @fa.state.each do |state|
+            if !@fa.isFinalState(state)
+                @fa.setFinalState(state)
+            elsif @fa.isFinalState(state)
+                @fa.final.delete(state)
+            end
+        end
+
+        return @fa
     end
 
     def self.createIntersection(lhs, rhs)
@@ -276,10 +385,3 @@ class String
         false
     end
 end
-
-# h = {}
-# h[0] = {}
-# h[0][Automaton::Epsilon] = Set.new()
-# h[0][Automaton::Epsilon].add(1)
-# puts h
-# puts h[0].key?(Automaton::Epsilon)
