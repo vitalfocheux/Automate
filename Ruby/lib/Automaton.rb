@@ -198,6 +198,75 @@ class Automaton
         end
         return false
     end
+
+    def isDeterministic
+        return false
+    end
+
+    def isComplete
+        return false
+    end
+
+    def makeTransition(origin, alpha)
+        return Set.new()
+    end
+
+    def readString(word)
+        return Set.new()
+    end
+
+    def match(word)
+        return false
+    end
+
+    def removeNonAccessibleState
+        return
+    end
+
+    def removeNonCoAccessibleStates
+        return
+    end
+
+    def isLanguageEmpty
+        return false
+    end
+
+    def hasEmptyIntersectionWith(other)
+        return false
+    end
+
+    def isIncludedIn(other)
+        return false
+    end
+
+    def self.createMirror(automaton)
+        return Automaton.new()
+    end
+
+    def self.createComplete(automaton)
+        return Automaton.new()
+    end
+
+    def self.createComplement(automaton)
+        return Automaton.new()
+    end
+
+    def self.createIntersection(lhs, rhs)
+        return Automaton.new()
+    end
+
+    def self.createDeterministic(other)
+        return Automaton.new()
+    end
+
+    def self.createMinimalMoore(other)
+        return Automaton.new()
+    end
+
+    def self.createMinimalBrzozowski(other)
+        return Automaton.new()
+    end
+
 end
 
 class String
