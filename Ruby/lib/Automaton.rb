@@ -306,16 +306,50 @@ class Automaton
             end
         end
         return false
-    end
-
-    
+    end    
 
     def removeNonAccessibleState
-        return
+        raise "Automaton isn't valid" unless self.isValid()
+        @visited = Set.new()
+        @toRemove = Set.new()
+
+        @states.each do |state|
+            if self.isInitialState(state)
+                DepthFirstSearch(state, @visited)
+            else
+                @toRemove.add(state)
+            end
+        end
+
+        @toRemove.each do |state|
+            if !@visited.include?(state)
+                self.removeState(state)
+            end
+        end
+
+        if !self.isValid()
+            self.addState(0)
+            self.setInitialState(0)
+        end
     end
 
     def removeNonCoAccessibleStates
-        return
+        raise "Automaton isn't valid" unless self.isValid()
+
+        @res = self
+        @res = createMirror(@res)
+        @res.removeNonAccessibleState()
+        if !@res.isValid()
+            @res.addState(0)
+            @res.alphabet.each do |alpha|
+                @res.addTransition(0, alpha, 0)
+            end
+            self.state = @res.state
+            self.transition = @res.transition
+        end
+        @res = createMirror(@res)
+        self.state = @res.state
+        self.transition = @res.transitions
     end
 
     def isLanguageEmpty
