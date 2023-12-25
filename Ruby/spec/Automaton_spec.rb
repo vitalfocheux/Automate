@@ -1035,4 +1035,98 @@ RSpec.describe Automaton do
         #     expect(@brzozowski.countSymbols()).to eq(2)
         # end
     end
+
+    describe "isComplete" do
+
+        it "ZeroTransition" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.isComplete()).to eq(false)
+
+            expect(@a.isValid()).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(true)
+            expect(@a.match("")).to eq(false)
+            expect(@a.match("a")).to eq(false)
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.countStates()).to eq(1)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.countTransitions()).to eq(0)
+        end
+
+        it "Good" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addTransition(0, 'a', 0)).to eq(true)
+            expect(@a.isComplete()).to eq(true)
+
+            expect(@a.isValid()).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(true)
+            expect(@a.match("")).to eq(false)
+            expect(@a.match("a")).to eq(false)
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.countStates()).to eq(1)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.hasTransition(0, 'a', 0)).to eq(true)
+            expect(@a.countTransitions()).to eq(1)
+        end
+
+        it "twoTransitionWithAlphabetTwoLetter" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 0)).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(1, 'a', 0)).to eq(true)
+            expect(@a.addTransition(1, 'a', 1)).to eq(true)
+            expect(@a.isComplete()).to eq(false)
+
+            expect(@a.isValid()).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(true)
+            expect(@a.match("")).to eq(false)
+            expect(@a.match("a")).to eq(false)
+            expect(@a.match("b")).to eq(false)
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.hasState(1)).to eq(true)
+            expect(@a.countStates()).to eq(2)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.hasSymbol('b')).to eq(true)
+            expect(@a.countSymbols()).to eq(2)
+            expect(@a.hasTransition(0, 'a', 0)).to eq(true)
+            expect(@a.hasTransition(0, 'a', 1)).to eq(true)
+            expect(@a.hasTransition(1, 'a', 0)).to eq(true)
+            expect(@a.hasTransition(1, 'a', 1)).to eq(true)
+            expect(@a.countTransitions()).to eq(4)
+        end
+
+        it "AddedRemovedTransition" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(1, 'a', 0)).to eq(true)
+            expect(@a.isComplete()).to eq(true)
+            expect(@a.removeTransition(1, 'a', 0)).to eq(true)
+            expect(@a.isComplete()).to eq(false)
+
+            expect(@a.isValid()).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(true)
+            expect(@a.match("")).to eq(false)
+            expect(@a.match("a")).to eq(false)
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.hasState(1)).to eq(true)
+            expect(@a.countStates()).to eq(2)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.hasTransition(0, 'a', 1)).to eq(true)
+            expect(@a.hasTransition(1, 'a', 0)).to eq(false)
+            expect(@a.countTransitions()).to eq(1)
+        end
+    end
 end
