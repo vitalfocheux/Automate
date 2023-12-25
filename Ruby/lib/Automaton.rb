@@ -205,9 +205,11 @@ class Automaton
         if @initial.length != 1
             return false
         end
-        @transition.each do |from, alpha|
-            if @transition.key?(from) && @transition[from].key?(alpha) && @transition[from][alpha].length > 1
-                return false
+        @transition.each do |from|
+            from[1].each do |letter, to|
+                if to.length > 1
+                    return false
+                end
             end
         end
         return true
@@ -233,16 +235,80 @@ class Automaton
     end
 
     def makeTransition(origin, alpha)
-        return Set.new()
+        raise "Automaton isn't valid" unless self.isValid()
+        raise "Origin isn't valid" unless origin.class == Set
+        raise "Alpha isn't valid" unless alpha.class == String
+
+        res = Set.new()
+
+        origin.each do |state|
+            @states.each do |to|
+                if self.hasTransition(state, alpha, to)
+                    res.add(to)
+                end
+            end
+        end
+
+        return res
     end
 
     def readString(word)
-        return Set.new()
+        @res = Set.new()
+
+        if @initial.empty?
+            return Set.new()
+        end
+
+        if word.empty?
+            return @initial
+        end
+
+        word.length.times do |i|
+            if !@alphabet.include?(word[i])
+                return Set.new()
+            end
+        end
+
+        @initial.each do |init|
+            initTransitions = makeTransition(Set.new([init]), word[0])
+            if initTransitions.empty?
+                next
+            end
+            if word.length == 1
+                initTransitions.each do |value|
+                    @res.add(value)
+                end
+                next
+            end
+            transitions = makeTransition(initTransitions, word[1])
+            if word.length == 2
+                transitions.each do |value|
+                    @res.add(value)
+                end
+                next
+            end
+            (2..word.length-1).each do |i|
+                transitions = makeTransition(transitions, word[i])
+            end
+            transitions.each do |value|
+                res.add(value)
+            end
+        end
+
+        return @res
     end
 
     def match(word)
+        m = readString(word)
+        m.each do |value|
+            if self.isFinalState(value)
+                return true
+            end
+        end
         return false
     end
+
+    
 
     def removeNonAccessibleState
         return
@@ -253,7 +319,26 @@ class Automaton
     end
 
     def isLanguageEmpty
-        return false
+        raise "Automaton isn't valid" unless self.isValid()
+        @visited = Set.new()
+
+        if @initial.length == 0 || @final.length == 0
+            return true
+        end
+
+        @states.each do |state|
+            if self.isInitialState(state)
+                DepthFirstSearch(state, @visited)
+            end
+        end
+        
+        @visited.each do |state|
+            if self.isFinalState(state)
+                return false
+            end
+        end
+
+        return true
     end
 
     def hasEmptyIntersectionWith(other)
@@ -374,6 +459,25 @@ class Automaton
 
     def self.createMinimalBrzozowski(other)
         return Automaton.new()
+    end
+
+    private
+    def DepthFirstSearch(state, visited)
+        visited.add(state)
+        stack = []
+        stack.push(state)
+        while !stack.empty?
+            s = stack.pop()
+            @alphabet.each do |alpha|
+                transitions = makeTransition(Set.new([s]), alpha)
+                transitions.each do |to|
+                    if !visited.include?(to)
+                        visited.add(to)
+                        stack.push(to)
+                    end
+                end
+            end
+        end
     end
 
 end
