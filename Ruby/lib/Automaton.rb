@@ -426,6 +426,13 @@ class Automaton
         copyThis.removeNonCoAccessibleStates()
         copyThis.removeNonAccessibleState()
 
+        diff = copyThis.alphabet - other.alphabet
+
+        diff.each do |c|
+            copyThis.states.each do |state|
+                return false if copyThis.transition.key?(state) && copyThis.transition[state].key?(c)
+            end
+        end
 
 
         return copyThis.hasEmptyIntersectionWith(Automaton.createComplement(other))
@@ -590,10 +597,126 @@ class Automaton
     end
 
     def self.createDeterministic(other)
-        @a = Automaton.new()
-        @a.addState(0)
-        @a.addSymbol('a')
-        return @a
+        raise "Automaton isn't valid" unless other.isValid()
+
+        @res = Automaton.new()
+
+        if other.isDeterministic()
+            other.states.each do |state|
+                @res.addState(state)
+            end
+
+            other.alphabet.each do |alpha|
+                @res.addSymbol(alpha)
+            end
+
+            other.transition.each do |from|
+                from[1].each do |letter|
+                    letter[1] do |to|
+                        @res.addTransition(from[0], letter[0], to)
+                    end
+                end
+            end
+
+            @res.removeNonAccessibleState
+            return @res
+        end
+
+        if other.initial.empty?
+            @res.addState(0)
+            @res.setInitialState(0)
+
+            other.alphabet do |alpha|
+                @res.addSymbol(alpha)
+            end
+
+            return @res
+        end
+
+        deter = Set.new()
+        deter.add([])
+        deterInit = []
+        indices = Set.new()
+
+        deterInit << 0
+        indices.add(0)
+
+        other.states.each do |state|
+            if other.isInitialState(state)
+                deterInit << state
+            end
+        end
+
+        deter.add(deterInit)
+
+        deter.each do |deterStateEntry|
+            other.alphabet.each do |alpha|
+
+                deterStateEntrySize = deterStateEntry.length
+
+                (1..deterStateEntrySize-1).each do |i|
+                    other.states.each do |stateEntry|
+                        if stateEntry == deterStateEntry[i] && other.isFinalState(stateEntry)
+                            @res.addState(deterStateEntry[0])
+                            @res.setFinalState(deterStateEntry[0])
+                        end
+                    end
+                end
+
+                if deterStateEntry.length > 1
+
+                    indice_from = deterStateEntry[0]
+
+                    @res.addSymbol(letter)
+                    @res.addState(indice_from)
+
+                    indice_to indices.length
+                    size = deterStateEntry.length
+
+                    origin = Set.new()
+                    (1..size-1).each do |i|
+                        origin.add(deterStateEntry[i])
+                    end
+
+                    transitionMT = other.makeTransition(origin, alpha)
+                    state = []
+                    state << indice_to
+                    transitionMT.each do |v|
+                        state << v
+                    end
+
+                    indices.each do |j|
+                        temp_state = []
+                        temp_state << j
+                        transitionMT.each do |v|
+                            temp_state << v
+                        end
+                        if deter.include?(temp_state)
+                            indice_to = j
+                            state = temp_state
+                            break
+                        end
+                    end
+
+                    addTr = false
+
+                    @res.addState(indice_to)
+
+                    if state.length > 1 && @res.addTransition(indice_from, alpha, indice_to)
+                        addTr = true
+                        deter.add(state)
+                        indices.add(indice_to)
+                    end
+                    if !addTr
+                        @res.removeState(indice_to)
+                    end
+                end
+            end
+        end
+
+        @res.setInitialState(0)
+
+        return @res
     end
 
     def self.createMinimalMoore(other)
