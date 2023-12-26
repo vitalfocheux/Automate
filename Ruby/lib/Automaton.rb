@@ -337,19 +337,53 @@ class Automaton
         raise "Automaton isn't valid" unless self.isValid()
 
         @res = self
-        @res = createMirror(@res)
+        @res = Automaton.createMirror(@res)
         @res.removeNonAccessibleState()
         if !@res.isValid()
             @res.addState(0)
             @res.alphabet.each do |alpha|
                 @res.addTransition(0, alpha, 0)
             end
-            self.state = @res.state
-            self.transition = @res.transition
+            @states = Set.new()
+            @res.states.each do |state|
+                self.addState(state)
+                if @res.isFinalState(state)
+                    self.setFinalState(state)
+                end
+                if @res.isInitialState(state)
+                    self.setInitialState(state)
+                end
+            end
+            @transition = {}
+
+            @res.transition.each do |stateEntry|
+                stateEntry[1].each do |letterEntry|
+                    letterEntry[1].each do |to|
+                        self.addTransition(stateEntry[0], letterEntry[0], to)
+                    end
+                end
+            end
         end
-        @res = createMirror(@res)
-        self.state = @res.state
-        self.transition = @res.transitions
+        @res = Automaton.createMirror(@res)
+        @states = Set.new()
+            @res.states.each do |state|
+                self.addState(state)
+                if @res.isFinalState(state)
+                    self.setFinalState(state)
+                end
+                if @res.isInitialState(state)
+                    self.setInitialState(state)
+                end
+            end
+        @transition = {}
+
+        @res.transition.each do |stateEntry|
+            stateEntry[1].each do |letterEntry|
+                letterEntry[1].each do |to|
+                    self.addTransition(stateEntry[0], letterEntry[0], to)
+                end
+            end
+        end
     end
 
     def isLanguageEmpty
@@ -376,18 +410,36 @@ class Automaton
     end
 
     def hasEmptyIntersectionWith(other)
-        return false
+        raise "Automaton isn't valid" unless self.isValid()
+        raise "Other isn't valid" unless other.isValid()
+
+        @res = Automaton.createIntersection(self, other)
+
+        return @res.isLanguageEmpty()
     end
 
     def isIncludedIn(other)
-        return false
+        raise "Automaton isn't valid" unless self.isValid()
+        raise "Other isn't valid" unless other.isValid()
+
+        copyThis = self
+        copyThis.removeNonCoAccessibleStates()
+        copyThis.removeNonAccessibleState()
+
+
+
+        return copyThis.hasEmptyIntersectionWith(Automaton.createComplement(other))
     end
 
     def self.createMirror(automaton)
         raise "Automaton isn't valid" unless automaton.isValid()
         @fa = Automaton.new()
-        @fa.alphabet = automaton.alphabet
-        @fa.state = automaton.state
+        automaton.alphabet.each do |alpha|
+            @fa.addSymbol(alpha)
+        end
+        automaton.states.each do |state|
+            @fa.addState(state)
+        end
 
         automaton.states.each do |state|
             if automaton.isInitialState(state)
@@ -413,10 +465,10 @@ class Automaton
         raise "Automaton isn't valid" unless automaton.isValid()
         if automaton.isLanguageEmpty()
             @base = Automaton.new()
-            @base.alphabet = automaton.alphabet
             @base.addState(0)
             @base.setInitialState(0)
-            @alphabet.each do |alpha|
+            automaton.alphabet.each do |alpha|
+                @base.addSymbol(alpha)
                 @base.addTransition(0, alpha, 0)
             end
             return @base
@@ -466,9 +518,9 @@ class Automaton
     def self.createComplement(automaton)
         raise "Automaton isn't valid" unless automaton.isValid()
 
-        @fa = createComplete(createDeterministic(automaton))
+        @fa = Automaton.createComplete(Automaton.createDeterministic(automaton))
 
-        @fa.state.each do |state|
+        @fa.states.each do |state|
             if !@fa.isFinalState(state)
                 @fa.setFinalState(state)
             elsif @fa.isFinalState(state)
@@ -480,11 +532,68 @@ class Automaton
     end
 
     def self.createIntersection(lhs, rhs)
-        return Automaton.new()
+        raise "lhs isn't valid" unless lhs.isValid()
+        raise "rhs isn't valid" unless rhs.isValid()
+
+        @Armanoïde = Automaton.new()
+
+        lhs.alphabet.each do |lhsLetter|
+            rhs.alphabet.each do |rhsLetter|
+                if lhsLetter == rhsLetter
+                    @Armanoïde.addSymbol(lhsLetter)
+                end
+            end
+        end
+
+        if @Armanoïde.countSymbols == 0
+            @Cobra = Automaton.new()
+            @Cobra.addState(0)
+            @Cobra.setInitialState(0)
+            @Cobra.alphabet = lhs.alphabet
+            return createComplete(@Cobra)
+        end
+
+        syncStates = {}
+        i = 0
+
+        lhs.states.each do |lhsState|
+            rhs.states.each do |rhsState|
+                syncStates[[lhsState, rhsState]] = i
+                @Armanoïde.addState(i)
+                if lhs.isInitialState(lhsState) && rhs.isInitialState(rhsState)
+                    @Armanoïde.setInitialState(i)
+                end
+                if lhs.isFinalState(lhsState) && rhs.isFinalState(rhsState)
+                    @Armanoïde.setFinalState(i)
+                end
+            end
+        end
+
+        lhs.transition.each do |lhsState|
+            lhs.transition[lhsState[0]] do |lhsLetter|
+                if !@Armanoïde.hasSymbol(lhsLetter[0])
+                    next
+                end
+                rhs.transition.each do |rhsState|
+                    rhs.transition[rhsState[0]] do |rhsLetter|
+                        lhsLetter[1].each do |lValue|
+                            rhsLetter[1].each do |rValue|
+                                @Armanoïde.addTransition(syncStates[[lhsState[0], rhsState[0]]], lhsLetter[0], syncStates[[lValue, rValue]])
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        return @Armanoïde
     end
 
     def self.createDeterministic(other)
-        return Automaton.new()
+        @a = Automaton.new()
+        @a.addState(0)
+        @a.addSymbol('a')
+        return @a
     end
 
     def self.createMinimalMoore(other)

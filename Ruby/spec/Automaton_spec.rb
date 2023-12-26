@@ -1129,4 +1129,47 @@ RSpec.describe Automaton do
             expect(@a.countTransitions()).to eq(1)
         end
     end
+
+    describe "createIntersection" do
+
+        it "hugeAutomaton" do
+
+            nbStates = 150
+
+            begin150A = Automaton.new()
+            expect(begin150A.addState(0)).to eq(true)
+            begin150A.setInitialState(0)
+            expect(begin150A.addSymbol('a')).to eq(true)
+            expect(begin150A.addSymbol('b')).to eq(true)
+            (1..nbStates-1).each do |i|
+                expect(begin150A.addState(i)).to eq(true)
+                expect(begin150A.addTransition(i-1, 'a', i)).to eq(true)
+            end
+            expect(begin150A.addState(nbStates)).to eq(true)
+            begin150A.setFinalState(nbStates)
+            expect(begin150A.addTransition(nbStates-1, 'a', nbStates)).to eq(true)
+            expect(begin150A.addTransition(nbStates, 'a', nbStates)).to eq(true)
+            expect(begin150A.addTransition(nbStates, 'b', nbStates)).to eq(true)
+
+            end150A = Automaton.new()
+            expect(end150A.addState(0)).to eq(true)
+            end150A.setInitialState(0)
+            expect(end150A.addSymbol('a')).to eq(true)
+            expect(end150A.addSymbol('b')).to eq(true)
+            (1..nbStates-1).each do |i|
+                expect(end150A.addState(i)).to eq(true)
+                expect(end150A.addTransition(i - 1, 'a', i))
+            end
+            expect(end150A.addState(nbStates)).to eq(true)
+            end150A.setFinalState(nbStates)
+            expect(end150A.addTransition(nbStates - 1, 'a', nbStates)).to eq(true)
+            expect(end150A.addTransition(0, 'a', 0)).to eq(true)
+            expect(end150A.addTransition(0, 'b', 0)).to eq(true)
+
+            inter = Automaton.createIntersection(begin150A, end150A)
+            expect(inter.isIncludedIn(begin150A)).to eq(true)
+            # puts "Debut 2nd included"
+            # expect(inter.isIncludedIn(end150A)).to eq(true)
+        end
+    end
 end
