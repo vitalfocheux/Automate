@@ -1130,46 +1130,195 @@ RSpec.describe Automaton do
         end
     end
 
-    describe "createIntersection" do
+    describe "createComplete" do
 
-        it "hugeAutomaton" do
+        it "alreadyComplete" do 
 
-            nbStates = 150
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 0)).to eq(true)
+            expect(@a.addTransition(0, 'b', 1)).to eq(true)
+            expect(@a.addTransition(1, 'a', 1)).to eq(true)
+            expect(@a.addTransition(1, 'b', 0)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
 
-            begin150A = Automaton.new()
-            expect(begin150A.addState(0)).to eq(true)
-            begin150A.setInitialState(0)
-            expect(begin150A.addSymbol('a')).to eq(true)
-            expect(begin150A.addSymbol('b')).to eq(true)
-            (1..nbStates-1).each do |i|
-                expect(begin150A.addState(i)).to eq(true)
-                expect(begin150A.addTransition(i-1, 'a', i)).to eq(true)
-            end
-            expect(begin150A.addState(nbStates)).to eq(true)
-            begin150A.setFinalState(nbStates)
-            expect(begin150A.addTransition(nbStates-1, 'a', nbStates)).to eq(true)
-            expect(begin150A.addTransition(nbStates, 'a', nbStates)).to eq(true)
-            expect(begin150A.addTransition(nbStates, 'b', nbStates)).to eq(true)
+            expect(@a.isComplete()).to eq(true)
 
-            end150A = Automaton.new()
-            expect(end150A.addState(0)).to eq(true)
-            end150A.setInitialState(0)
-            expect(end150A.addSymbol('a')).to eq(true)
-            expect(end150A.addSymbol('b')).to eq(true)
-            (1..nbStates-1).each do |i|
-                expect(end150A.addState(i)).to eq(true)
-                expect(end150A.addTransition(i - 1, 'a', i))
-            end
-            expect(end150A.addState(nbStates)).to eq(true)
-            end150A.setFinalState(nbStates)
-            expect(end150A.addTransition(nbStates - 1, 'a', nbStates)).to eq(true)
-            expect(end150A.addTransition(0, 'a', 0)).to eq(true)
-            expect(end150A.addTransition(0, 'b', 0)).to eq(true)
+            expect(@a.isValid()).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(false)
+            expect(@a.hasState(0)).to eq(true)
+            expect(@a.hasState(1)).to eq(true)
+            expect(@a.countStates()).to eq(2)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.hasSymbol('b')).to eq(true)
+            expect(@a.countSymbols()).to eq(2)
+            expect(@a.hasTransition(0, 'a', 0)).to eq(true)
+            expect(@a.hasTransition(0, 'b', 1)).to eq(true)
+            expect(@a.hasTransition(1, 'a', 1)).to eq(true)
+            expect(@a.hasTransition(1, 'b', 0)).to eq(true)
+            expect(@a.countTransitions()).to eq(4)
 
-            inter = Automaton.createIntersection(begin150A, end150A)
-            expect(inter.isIncludedIn(begin150A)).to eq(true)
-            # puts "Debut 2nd included"
-            # expect(inter.isIncludedIn(end150A)).to eq(true)
+            @complete = Automaton.createComplete(@a)
+
+            expect(@complete.isComplete()).to eq(true)
+            expect(@complete.isValid()).to eq(true)
+            expect(@complete.isLanguageEmpty()).to eq(false)
+            expect(@a.countSymbols()).to eq(2)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.hasSymbol('b')).to eq(true)
+
         end
+
+        it "notComplete" do 
+
+            (0..3).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(3)
+            expect(@a.addTransition(0, 'b', 1)).to eq(true)
+            expect(@a.addTransition(1, 'a', 2)).to eq(true)
+            expect(@a.addTransition(2, 'a', 2)).to eq(true)
+            expect(@a.addTransition(2, 'b', 3)).to eq(true)
+            expect(@a.isComplete()).to eq(false)
+
+            expect(@a.isValid()).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(false)
+            (0..3).each do |i|
+                expect(@a.hasState(i)).to eq(true)
+            end
+            expect(@a.countStates()).to eq(4)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.hasSymbol('b')).to eq(true)
+            expect(@a.countSymbols()).to eq(2)
+            expect(@a.hasTransition(0, 'b', 1)).to eq(true)
+            expect(@a.hasTransition(1, 'a', 2)).to eq(true)
+            expect(@a.hasTransition(2, 'a', 2)).to eq(true)
+            expect(@a.hasTransition(2, 'b', 3)).to eq(true)
+            expect(@a.countTransitions()).to eq(4)
+
+            @complete = Automaton.createComplete(@a)
+
+            expect(@complete.isValid()).to eq(true)
+            expect(@complete.isLanguageEmpty()).to eq(false)
+            expect(@complete.hasSymbol('a')).to eq(true)
+            expect(@complete.hasSymbol('b')).to eq(true)
+            expect(@complete.countSymbols()).to eq(2)
+            expect(@complete.isComplete()).to eq(true)
+
+        end
+
+        it "withMaxState" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(INT_MAX)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(INT_MAX)
+            expect(@a.addTransition(0, 'a', INT_MAX)).to eq(true)
+            expect(@a.isComplete()).to eq(false)
+
+            @complete = Automaton.createComplete(@a)
+
+            expect(@complete.isValid()).to eq(true)
+            expect(@complete.isLanguageEmpty()).to eq(false)
+            expect(@complete.hasSymbol('a')).to eq(true)
+            expect(@complete.hasSymbol('b')).to eq(true)
+            expect(@complete.countSymbols()).to eq(2)
+            expect(@complete.isComplete()).to eq(true)
+
+        end
+
+        it "MissingState" do
+
+            (0..2).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(1, 'a', 0)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            expect(@a.isComplete()).to eq(false)
+
+            @complete = Automaton.createComplete(@a)
+
+            expect(@complete.isValid()).to eq(true)
+            expect(@complete.isLanguageEmpty()).to eq(false)
+            expect(@complete.hasSymbol('a')).to eq(true)
+            expect(@complete.countSymbols()).to eq(1)
+            expect(@complete.isComplete()).to eq(true)
+
+        end
+
+        it "Flecy" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(0)
+
+            @complete = Automaton.createComplete(@a)
+
+            expect(@complete.isValid()).to eq(true)
+            expect(@complete.isLanguageEmpty()).to eq(false)
+            expect(@complete.hasSymbol('a')).to eq(true)
+            expect(@complete.hasSymbol('b')).to eq(true)
+            expect(@complete.countSymbols()).to eq(2)
+            expect(@complete.isComplete()).to eq(true)
+
+        end
+
     end
+
+
+    # describe "createIntersection" do
+
+    #     it "hugeAutomaton" do
+
+    #         nbStates = 150
+
+    #         begin150A = Automaton.new()
+    #         expect(begin150A.addState(0)).to eq(true)
+    #         begin150A.setInitialState(0)
+    #         expect(begin150A.addSymbol('a')).to eq(true)
+    #         expect(begin150A.addSymbol('b')).to eq(true)
+    #         (1..nbStates-1).each do |i|
+    #             expect(begin150A.addState(i)).to eq(true)
+    #             expect(begin150A.addTransition(i-1, 'a', i)).to eq(true)
+    #         end
+    #         expect(begin150A.addState(nbStates)).to eq(true)
+    #         begin150A.setFinalState(nbStates)
+    #         expect(begin150A.addTransition(nbStates-1, 'a', nbStates)).to eq(true)
+    #         expect(begin150A.addTransition(nbStates, 'a', nbStates)).to eq(true)
+    #         expect(begin150A.addTransition(nbStates, 'b', nbStates)).to eq(true)
+
+    #         end150A = Automaton.new()
+    #         expect(end150A.addState(0)).to eq(true)
+    #         end150A.setInitialState(0)
+    #         expect(end150A.addSymbol('a')).to eq(true)
+    #         expect(end150A.addSymbol('b')).to eq(true)
+    #         (1..nbStates-1).each do |i|
+    #             expect(end150A.addState(i)).to eq(true)
+    #             expect(end150A.addTransition(i - 1, 'a', i))
+    #         end
+    #         expect(end150A.addState(nbStates)).to eq(true)
+    #         end150A.setFinalState(nbStates)
+    #         expect(end150A.addTransition(nbStates - 1, 'a', nbStates)).to eq(true)
+    #         expect(end150A.addTransition(0, 'a', 0)).to eq(true)
+    #         expect(end150A.addTransition(0, 'b', 0)).to eq(true)
+
+    #         inter = Automaton.createIntersection(begin150A, end150A)
+    #         expect(inter.isIncludedIn(begin150A)).to eq(true)
+    #         # puts "Debut 2nd included"
+    #         # expect(inter.isIncludedIn(end150A)).to eq(true)
+    #     end
+    # end
 end
