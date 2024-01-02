@@ -14,25 +14,19 @@ RSpec.describe Automaton do
         it "noSymbol and noState" do
             expect(@a.isValid()).to eq(false)
         end
-    end
-
-    describe "isValid" do
+    
         it "withSymbol and noState" do
             expect(@a.addSymbol("a")).to eq(true)
             expect(@a.isValid()).to eq(false)
             expect(@a.hasSymbol("a")).to eq(true)
         end
-    end
 
-    describe "isValid" do
         it "noSymbol and withState" do
             expect(@a.addState(0)).to eq(true)
             expect(@a.isValid()).to eq(false)
             expect(@a.hasState(0)).to eq(true)
         end
-    end
 
-    describe "isValid" do
         it "withSymbol and withState" do
             expect(@a.addSymbol("a")).to eq(true)
             expect(@a.addState(0)).to eq(true)
@@ -46,21 +40,15 @@ RSpec.describe Automaton do
         it "Epsilon" do
             expect(@a.addSymbol(Automaton::Epsilon)).to eq(false)
         end
-    end
-
-    describe "addSymbol" do
+    
         it "Space" do
             expect(@a.addSymbol(" ")).to eq(false)
         end
-    end
-
-    describe "addSymbol" do
+    
         it "isNotGraph" do
             expect(@a.addSymbol("\n")).to eq(false)
         end
-    end
-
-    describe "addSymbol" do
+    
         it "isGraph" do
             count = 0
             256.times do |i|
@@ -78,17 +66,13 @@ RSpec.describe Automaton do
             end
             expect(@a.countSymbols()).to eq(189)
         end
-    end
-
-    describe "addSymbol" do
+   
         it "oneSymbol" do
             expect(@a.addSymbol("a")).to eq(true)
             expect(@a.hasSymbol("a")).to eq(true)
             expect(@a.countSymbols()).to eq(1)
         end
-    end
-
-    describe "addSymbol" do
+    
         it "twoSymbol" do
             expect(@a.addSymbol("a")).to eq(true)
             expect(@a.hasSymbol("a")).to eq(true)
@@ -97,9 +81,7 @@ RSpec.describe Automaton do
             expect(@a.hasSymbol("b")).to eq(true)
             expect(@a.countSymbols()).to eq(2)
         end
-    end
-
-    describe "addSymbol" do
+    
         it "twoSameSymbol" do
             expect(@a.addSymbol("a")).to eq(true)
             expect(@a.addSymbol("a")).to eq(false)
@@ -115,15 +97,11 @@ RSpec.describe Automaton do
             expect(@a.hasSymbol("a")).to eq(false)
             expect(@a.countSymbols()).to eq(0)
         end
-    end
-
-    describe "removeSymbol" do
+    
         it "Empty" do
             expect(@a.removeSymbol("a")).to eq(false)
         end
-    end
-
-    describe "removeSymbol" do
+    
         it "notInAlphabet" do
             expect(@a.addSymbol("a")).to eq(true)
             expect(@a.removeSymbol("b")).to eq(false)
@@ -131,9 +109,7 @@ RSpec.describe Automaton do
             expect(@a.hasSymbol("b")).to eq(false)
             expect(@a.countSymbols()).to eq(1)
         end
-    end
-
-    describe "removeSymbol" do
+    
         it "allCharacter" do
             count = 0
             256.times do |i|
@@ -168,9 +144,7 @@ RSpec.describe Automaton do
 
             expect(@a.countSymbols()).to eq(0)
         end
-    end
-
-    describe "removeSymbol" do
+    
         it "symbolInTransition" do
             expect(@a.addSymbol("a")).to eq(true)
             expect(@a.addState(0)).to eq(true)
@@ -186,9 +160,7 @@ RSpec.describe Automaton do
         it "Empty" do
             expect(@a.hasSymbol("a")).to eq(false)
         end
-    end
-
-    describe "hasSymbol" do
+    
         it "Succes" do
             7.times do |i|
                 a = i + 'a'.ord
@@ -196,9 +168,7 @@ RSpec.describe Automaton do
                 expect(@a.hasSymbol(a.to_s)).to eq(true)
             end
         end
-    end
-
-    describe "hasSymbol" do
+    
         it "notIsGraph" do
             7.times do |i|
                 a = i + 'a'.ord
