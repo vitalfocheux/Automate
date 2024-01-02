@@ -1,5 +1,6 @@
 require 'rspec'
 require_relative '../lib/Automaton.rb'
+require_relative './Automaton_spec_helper.rb'
 
 INT_MAX = (2**(0.size * 8 -2) -1)
 INT_MIN = -INT_MAX - 1

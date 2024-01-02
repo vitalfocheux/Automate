@@ -498,7 +498,7 @@ class Automaton
 
         if trash == size-1
 
-            if size-1 == 0 && !fa.hasState(0)
+            if size-1 == 0 && !@fa.hasState(0)
                 trash = 0
             else
                 trash = size
@@ -698,12 +698,12 @@ class Automaton
                         end
                     end
 
-                    addTr = false
+                    isAddTr = false
 
                     @res.addState(indice_to)
 
                     if state.length > 1 && @res.addTransition(indice_from, alpha, indice_to)
-                        addTr = true
+                        isAddTr = true
                         deter.add(state)
                         indices.add(indice_to)
                     end
