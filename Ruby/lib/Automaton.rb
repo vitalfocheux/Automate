@@ -667,10 +667,10 @@ class Automaton
 
                     indice_from = deterStateEntry[0]
 
-                    @res.addSymbol(letter)
+                    @res.addSymbol(alpha)
                     @res.addState(indice_from)
 
-                    indice_to indices.length
+                    indice_to = indices.length
                     size = deterStateEntry.length
 
                     origin = Set.new()

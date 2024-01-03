@@ -1249,6 +1249,282 @@ RSpec.describe Automaton do
 
     end
 
+    describe "createComplement" do
+
+        it "notCompleteAndAlreadyDeterministic" do
+
+            (0..2).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'b', 2)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @a.setFinalState(2)
+            expect(@a.isDeterministic()).to eq(true)
+            expect(@a.isComplete()).to eq(false)
+
+            @complement = Automaton.createComplement(@a)
+
+            expect(@complement.isValid()).to eq(true)
+            expect(@complement.isLanguageEmpty()).to eq(false)
+            expect(@complement.isDeterministic()).to eq(true)
+            expect(@complement.isComplete()).to eq(true)
+            expect(@complement.countSymbols()).to eq(2)
+            expect(@complement.hasSymbol('a')).to eq(true)
+            expect(@complement.hasSymbol('b')).to eq(true)
+        end
+
+        it "AlreadyCompleteAndAlreadyDeterministic" do
+
+            (0..2).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'b', 2)).to eq(true)
+            expect(@a.addTransition(1, 'a', 1)).to eq(true)
+            expect(@a.addTransition(1, 'b', 1)).to eq(true)
+            expect(@a.addTransition(2, 'a', 2)).to eq(true)
+            expect(@a.addTransition(2, 'b', 2)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @a.setFinalState(2)
+            expect(@a.isDeterministic()).to eq(true)
+            expect(@a.isComplete()).to eq(true)
+
+            @complement = Automaton.createComplement(@a)
+
+            expect(@complement.isValid()).to eq(true)
+            expect(@complement.isLanguageEmpty()).to eq(false)
+            expect(@complement.isDeterministic()).to eq(true)
+            expect(@complement.isComplete()).to eq(true)
+            expect(@complement.countSymbols()).to eq(2)
+            expect(@complement.hasSymbol('a')).to eq(true)
+            expect(@complement.hasSymbol('b')).to eq(true)
+        end
+
+        it "NotCompleteAndNotDeterministic" do
+
+            (0..2).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @a.setFinalState(2)
+            expect(@a.isDeterministic()).to eq(false)
+            expect(@a.isComplete()).to eq(false)
+
+            @complement = Automaton.createComplement(@a)
+
+            expect(@complement.isValid()).to eq(true)
+            expect(@complement.isLanguageEmpty()).to eq(false)
+            expect(@complement.isDeterministic()).to eq(true)
+            expect(@complement.isComplete()).to eq(true)
+            expect(@complement.countSymbols()).to eq(2)
+            expect(@complement.hasSymbol('a')).to eq(true)
+            expect(@complement.hasSymbol('b')).to eq(true)
+        end
+
+        it "noInitialState" do
+
+            (0..2).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            @a.setFinalState(1)
+            @a.setFinalState(2)
+            expect(@a.isDeterministic()).to eq(false)
+            expect(@a.isComplete()).to eq(false)
+
+            @complement = Automaton.createComplement(@a)
+
+            expect(@complement.isValid()).to eq(true)
+            expect(@complement.isLanguageEmpty()).to eq(false)
+            expect(@complement.isDeterministic()).to eq(true)
+            expect(@complement.isComplete()).to eq(true)
+            expect(@complement.countSymbols()).to eq(2)
+            expect(@complement.hasSymbol('a')).to eq(true)
+            expect(@complement.hasSymbol('b')).to eq(true)
+
+        end
+
+        it "multipleInitialState" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'b', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(4)
+            expect(@a.isDeterministic()).to eq(false)
+            expect(@a.isComplete()).to eq(false)
+
+            @complement = Automaton.createComplement(@a)
+
+            expect(@complement.isValid()).to eq(true)
+            expect(@complement.isLanguageEmpty()).to eq(false)
+            expect(@complement.isDeterministic()).to eq(true)
+            expect(@complement.isComplete()).to eq(true)
+            expect(@complement.countSymbols()).to eq(2)
+            expect(@complement.hasSymbol('a')).to eq(true)
+            expect(@complement.hasSymbol('b')).to eq(true)
+        end
+    end
+
+    describe "createMirror" do
+
+        it "Empty" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+
+            @mirror = Automaton.createMirror(@a)
+
+            expect(@mirror.isValid()).to eq(true)
+            expect(@mirror.isLanguageEmpty()).to eq(true)
+            expect(@a.countStates()).to eq(1)
+            expect(@a.countSymbols()).to eq(1)
+            expect(@a.hasSymbol('a')).to eq(true)
+            expect(@a.countTransitions()).to eq(0)
+
+        end
+
+        it "Mirror" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+
+            @mirror = Automaton.createMirror(@a)
+
+            expect(@mirror.isValid()).to eq(true)
+            expect(@mirror.isLanguageEmpty()).to eq(false)
+            expect(@mirror.countStates()).to eq(2)
+            expect(@mirror.countSymbols()).to eq(1)
+            expect(@mirror.hasSymbol('a')).to eq(true)
+            expect(@mirror.countTransitions()).to eq(1)
+
+        end
+
+        it "deterministicAndNotCompleteWithMultipleFinalState" do
+
+            (0..2).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'b', 2)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @a.setFinalState(2)
+            expect(@a.isDeterministic()).to eq(true)
+            expect(@a.isComplete()).to eq(false)
+
+            @mirror = Automaton.createMirror(@a)
+
+            expect(@mirror.isValid()).to eq(true)
+            expect(@mirror.isLanguageEmpty()).to eq(false)
+            expect(@mirror.countStates()).to eq(3)
+            expect(@mirror.countSymbols()).to eq(2)
+            expect(@mirror.hasSymbol('a')).to eq(true)
+            expect(@mirror.hasSymbol('b')).to eq(true)
+            expect(@mirror.countTransitions()).to eq(2)
+        end
+
+        it "deterministicAndNotCompleteWithOneFinalState" do
+
+            (0..2).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'b', 2)).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            expect(@a.isDeterministic()).to eq(true)
+            expect(@a.isComplete()).to eq(false)
+
+            @mirror = Automaton.createMirror(@a)
+
+            expect(@mirror.isValid()).to eq(true)
+            expect(@mirror.isLanguageEmpty()).to eq(false)
+            expect(@mirror.countStates()).to eq(3)
+            expect(@mirror.countSymbols()).to eq(2)
+            expect(@mirror.hasSymbol('a')).to eq(true)
+            expect(@mirror.hasSymbol('b')).to eq(true)
+            expect(@mirror.countTransitions()).to eq(2)
+
+        end
+
+        it "notDeterministicAndComplete" do
+
+            (0..2).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'b', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(1, 'a', 1)).to eq(true)
+            expect(@a.addTransition(1, 'b', 2)).to eq(true)
+            expect(@a.addTransition(2, 'a', 2)).to eq(true)
+            expect(@a.addTransition(2, 'b', 2)).to eq(true)
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(2)
+            expect(@a.isDeterministic()).to eq(false)   
+            expect(@a.isComplete()).to eq(true)
+
+            @mirror = Automaton.createMirror(@a)
+
+            expect(@mirror.isValid()).to eq(true)
+            expect(@mirror.isLanguageEmpty()).to eq(false)
+            expect(@mirror.countStates()).to eq(3)
+            expect(@mirror.countSymbols()).to eq(2)
+            expect(@mirror.hasSymbol('a')).to eq(true)
+            expect(@mirror.hasSymbol('b')).to eq(true)
+            expect(@mirror.countTransitions()).to eq(7)
+        end
+    end
+            
+
 
     # describe "createIntersection" do
 
