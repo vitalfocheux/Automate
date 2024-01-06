@@ -1,4 +1,5 @@
 require 'rspec'
+require 'set'
 require_relative '../lib/Automaton.rb'
 require_relative './Automaton_spec_helper.rb'
 
@@ -1522,6 +1523,112 @@ RSpec.describe Automaton do
             expect(@mirror.hasSymbol('b')).to eq(true)
             expect(@mirror.countTransitions()).to eq(7)
         end
+    end
+
+    describe "makeTransition" do
+
+        it "noTransition" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            @res = @a.makeTransition(Set.new([0]), 'a')
+            expect(@res).to eq(Set.new())
+        end
+
+        it "originNull" do 
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @res = @a.makeTransition(Set.new(), 'a')
+            expect(@res).to eq(Set.new())
+        end
+
+        it "noState" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @res = @a.makeTransition(Set.new([2]), 'a')
+            expect(@res).to eq(Set.new())
+        end
+
+        it "noSymbol" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @res = @a.makeTransition(Set.new([0]), 'b')
+            expect(@res).to eq(Set.new())
+        end
+
+        it "originNullAndNoSymbol" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @res = @a.makeTransition(Set.new(), 'b')
+            expect(@res).to eq(Set.new())
+        end
+
+        it "noStateAndNoSymbol" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @res = @a.makeTransition(Set.new([2]), 'b')
+            expect(@res).to eq(Set.new())
+        end
+
+        it "noTransitionAndNoSymbol" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+            @res = @a.makeTransition(Set.new([1]), 'b')
+            expect(@res).to eq(Set.new())
+        end
+
+        it "succes" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(1)
+            @a.setFinalState(4)
+
+            @res = @a.makeTransition(Set.new([0, 1]), 'a')
+            expect(@res).to eq(Set.new([1, 2, 3]))
+            expect(@res.empty?).to eq(false)
+        end
+
     end
             
 
