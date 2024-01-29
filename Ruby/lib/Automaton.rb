@@ -291,7 +291,7 @@ class Automaton
                 transitions = makeTransition(transitions, word[i])
             end
             transitions.each do |value|
-                res.add(value)
+                @res.add(value)
             end
         end
 

@@ -1631,7 +1631,430 @@ RSpec.describe Automaton do
 
     end
             
+    describe "readString" do
 
+        it "notInAlphabetWithFinalAndInitialState" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(1)
+            @a.setFinalState(4)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            @res = @a.readString("abc");
+            expect(@res).to eq(Set.new())
+
+        end
+
+        it "notInAlphabetWithNoFinalAndInitialState" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(4)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            @res = @a.readString("abc");
+            expect(@res).to eq(Set.new())
+        end
+
+        it "noStateInitial" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setFinalState(1)
+            @a.setFinalState(4)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            @res = @a.readString("a");
+            expect(@res).to eq(Set.new())
+        end
+
+        it "noStateFinal" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            @res = @a.readString("a");
+            expect(@res).to eq(Set.new([1, 2, 3]))
+        end
+
+        it "noStateFinalAndNoStateInitial" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            @res = @a.readString("a");
+            expect(@res).to eq(Set.new())
+        end
+
+        it "toShortWord" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(1)
+            @a.setFinalState(4)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            @res = @a.readString("ab");
+            expect(@res).to eq(Set.new([3, 4]))
+        end
+
+        it "toLongWord" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(1)
+            @a.setFinalState(4)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+
+            @res = @a.readString("abbaa");
+            expect(@res).to eq(Set.new())
+        end
+
+        it "stringNullNotAccept" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'b', 0)).to eq(true)
+            expect(@a.addTransition(1, 'b', 0)).to eq(true)
+
+            @res = @a.readString("");
+            expect(@res).to eq(Set.new([0]))
+        end
+    end
+
+    describe "match" do
+
+        it "notInAlphabetWithFinalAndInitialState" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(1)
+            @a.setFinalState(4)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            expect(@a.match("abc")).to eq(false)
+
+        end
+
+        it "notInAlphabetWithNoFinalAndInitialState" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(4)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            expect(@a.match("abc")).to eq(false)
+        end
+
+        it "noStateInitial" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setFinalState(1)
+            @a.setFinalState(4)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            expect(@a.match("a")).to eq(false)
+        end
+
+        it "noStateFinal" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            expect(@a.match("a")).to eq(false)
+        end
+
+        it "noStateFinalAndNoStateInitial" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            expect(@a.match("a")).to eq(false)
+        end
+
+        it "toShortWord" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(1)
+            @a.setFinalState(4)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+            expect(@a.addTransition(4, 'a', 4)).to eq(true)
+
+            expect(@a.match("ab")).to eq(true)
+        end
+
+        it "toLongWord" do
+
+            (0..4).each do |i|
+                expect(@a.addState(i)).to eq(true)
+            end
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(1)
+            @a.setFinalState(4)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'a', 2)).to eq(true)
+            expect(@a.addTransition(0, 'a', 3)).to eq(true)
+            expect(@a.addTransition(1, 'b', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 3)).to eq(true)
+            expect(@a.addTransition(2, 'a', 4)).to eq(true)
+            expect(@a.addTransition(3, 'a', 3)).to eq(true)
+            expect(@a.addTransition(3, 'b', 4)).to eq(true)
+
+            expect(@a.match("abbaa")).to eq(false)
+        end
+
+        it "stringNullNotAccept" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setFinalState(1)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'b', 0)).to eq(true)
+            expect(@a.addTransition(1, 'b', 0)).to eq(true)
+
+            expect(@a.match("")).to eq(false)
+        end
+
+        it "stringNullAccept" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+
+            expect(@a.addSymbol('a')).to eq(true)
+            expect(@a.addSymbol('b')).to eq(true)
+
+            @a.setInitialState(0)
+            @a.setFinalState(0)
+            @a.setFinalState(1)
+
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.addTransition(0, 'b', 0)).to eq(true)
+            expect(@a.addTransition(1, 'b', 0)).to eq(true)
+
+            expect(@a.match("")).to eq(true)
+        end
+    end
 
     # describe "createIntersection" do
 
