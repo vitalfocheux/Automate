@@ -2056,6 +2056,73 @@ RSpec.describe Automaton do
         end
     end
 
+    describe "isLanguageEmpty" do
+
+        it "notEmpty" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(0)
+            expect(@a.addTransition(0, 'a', 0)).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(false)
+        end
+
+        it "empty" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            expect(@a.isLanguageEmpty()).to eq(true)
+        end
+
+        it "noFinalState" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(true)
+        end
+
+        it "noInitialState" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setFinalState(1)
+            expect(@a.addTransition(0, 'a', 1)).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(true)
+        end
+
+        it "multipleInitialStateWithAcceptWord" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            @a.setInitialState(1)
+            @a.setFinalState(1)
+            expect(@a.addTransition(1, 'a', 1)).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(false)
+        end
+
+        it "notLinked" do
+
+            expect(@a.addState(0)).to eq(true)
+            expect(@a.addState(1)).to eq(true)
+            expect(@a.addState(2)).to eq(true)
+            expect(@a.addSymbol('a')).to eq(true)
+            @a.setInitialState(0)
+            @a.setFinalState(2)
+            expect(@a.addTransition(1, 'a', 0)).to eq(true)
+            expect(@a.addTransition(1, 'a', 2)).to eq(true)
+            expect(@a.isLanguageEmpty()).to eq(true)
+        end
+
+    end
+
     # describe "createIntersection" do
 
     #     it "hugeAutomaton" do
