@@ -353,4 +353,352 @@ public class testAutomate {
         Assert.assertEquals(a.countTransitions(), 0);
     }
 
+    @Test
+    public void removedState_DestinationInTransition(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.removeState(1));
+
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertFalse(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 1);
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertEquals(a.countSymbols(), 1);
+        Assert.assertFalse(a.hasTransition(0, 'a', 1));
+        Assert.assertEquals(a.countTransitions(), 0);
+    }
+
+    @Test
+    public void removedState_OriginAndDestinationInTransition(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.removeState(0));
+        Assert.assertTrue(a.removeState(1));
+
+        Assert.assertFalse(a.hasState(0));
+        Assert.assertFalse(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 0);
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertEquals(a.countSymbols(), 1);
+        Assert.assertFalse(a.hasTransition(0, 'a', 1));
+        Assert.assertEquals(a.countTransitions(), 0);
+    }
+
+    @Test
+    public void removedState_StateInTransition(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'b', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Assert.assertTrue(a.removeState(3));
+
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertTrue(a.hasSymbol('b'));
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertTrue(a.hasState(2));
+        Assert.assertFalse(a.hasState(3));
+        Assert.assertTrue(a.hasState(4));
+        Assert.assertTrue(a.hasTransition(0, 'a', 1));
+        Assert.assertTrue(a.hasTransition(0, 'a', 2));
+        Assert.assertFalse(a.hasTransition(0, 'a', 3));
+        Assert.assertFalse(a.hasTransition(1, 'b', 3));
+        Assert.assertFalse(a.hasTransition(2, 'a', 3));
+        Assert.assertTrue(a.hasTransition(2, 'b', 4));
+        Assert.assertFalse(a.hasTransition(3, 'a', 3));
+        Assert.assertFalse(a.hasTransition(3, 'b', 4));
+        Assert.assertTrue(a.hasTransition(4, 'a', 4));
+        Assert.assertEquals(a.countTransitions(), 4);
+    }
+
+    @Test
+    public void hasState_Empty(){
+        Assert.assertFalse(a.hasState(0));
+    }
+
+    @Test
+    public void hasState_AlreadyIn(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.hasState(0));
+    }
+
+    @Test
+    public void hasState_NotIn(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertFalse(a.hasState(1));
+    }
+
+    @Test
+    public void countStates_Empty(){
+        Assert.assertEquals(a.countStates(), 0);
+    }
+
+    @Test
+    public void countStates_NotEmpty(){
+        for(int i = 0; i < 10; ++i){
+            Assert.assertTrue(a.addState(i));
+            Assert.assertEquals(a.countStates(), i + 1);
+        }
+    }
+
+    @Test
+    public void setStateInitial_OneInitialState(){
+        Assert.assertTrue(a.addState(0));
+        a.setStateInitial(0);
+        Assert.assertTrue(a.isStateInitial(0));
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertEquals(a.countStates(), 1);;
+    }
+
+    @Test
+    public void setStateInitial_ToFinalAndInitial(){
+        Assert.assertTrue(a.addState(0));
+        a.setStateFinal(0);
+        a.setStateInitial(0);
+        Assert.assertTrue(a.isStateInitial(0));
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertEquals(a.countStates(), 1);
+    }
+
+    @Test
+    public void setStateInitial_TwoInitialStates(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        Assert.assertTrue(a.isStateInitial(0));
+        Assert.assertTrue(a.isStateInitial(1));
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 2);
+    }
+
+    @Test
+    public void setStateInitial_UnknownState(){
+        Assert.assertTrue(a.addState(0));
+        a.setStateInitial(1);
+        Assert.assertFalse(a.isStateInitial(1));
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertFalse(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 1);
+    }
+
+    @Test
+    public void setStateFinal_OneFinalState(){
+        Assert.assertTrue(a.addState(0));
+        a.setStateFinal(0);
+        Assert.assertTrue(a.isStateFinal(0));
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertEquals(a.countStates(), 1);
+    }
+
+    @Test
+    public void setStateFinal_TwoFinalStates(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        a.setStateFinal(0);
+        a.setStateFinal(1);
+        Assert.assertTrue(a.isStateFinal(0));
+        Assert.assertTrue(a.isStateFinal(1));
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 2);
+    }
+
+    @Test
+    public void setStateFinal_ToFinalAndInitial(){
+        Assert.assertTrue(a.addState(0));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+        Assert.assertTrue(a.isStateFinal(0));
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertEquals(a.countStates(), 1);
+    }
+
+    @Test
+    public void setStateFinal_UnknownState(){
+        Assert.assertTrue(a.addState(0));
+        a.setStateFinal(1);
+        Assert.assertFalse(a.isStateFinal(1));
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertFalse(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 1);
+    }
+
+    @Test
+    public void addedTransition_UnknownSymbol(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertFalse(a.addTransition(0, 'a', 1));
+
+        
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 2);
+        Assert.assertFalse(a.hasSymbol('a'));
+        Assert.assertEquals(a.countSymbols(), 0);
+        Assert.assertFalse(a.hasTransition(0, 'a', 1));
+        Assert.assertEquals(a.countTransitions(), 0);
+    }
+
+    @Test
+    public void addedTransition_UnknownOrigin(){
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertFalse(a.addTransition(0, 'a', 1));
+
+        Assert.assertFalse(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 1);
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertEquals(a.countSymbols(), 1);
+        Assert.assertFalse(a.hasTransition(1, 'a', 0));
+        Assert.assertEquals(a.countTransitions(), 0);
+    }
+
+    @Test
+    public void addedTransition_UnknownTarget(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertFalse(a.addTransition(0, 'a', 1));
+
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertFalse(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 1);
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertEquals(a.countSymbols(), 1);
+        Assert.assertFalse(a.hasTransition(0, 'a', 1));
+        Assert.assertEquals(a.countTransitions(), 0);
+    }
+
+    @Test
+    public void addedTransition_OneTransition(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 2);
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertEquals(a.countSymbols(), 1);
+        Assert.assertTrue(a.hasTransition(0, 'a', 1));
+        Assert.assertEquals(a.countTransitions(), 1);
+    }
+
+    @Test
+    public void addedTransition_TwoIdenticalTransitions(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertFalse(a.addTransition(0, 'a', 1));
+
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 2);
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertEquals(a.countSymbols(), 1);
+        Assert.assertTrue(a.hasTransition(0, 'a', 1));
+        Assert.assertEquals(a.countTransitions(), 1);
+    }
+
+    @Test
+    public void addedTransition_SameOriginAndLetter(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertTrue(a.hasState(2));
+        Assert.assertEquals(a.countStates(), 3);
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertEquals(a.countSymbols(), 1);
+        Assert.assertTrue(a.hasTransition(0, 'a', 1));
+        Assert.assertTrue(a.hasTransition(0, 'a', 2));
+        Assert.assertEquals(a.countTransitions(), 2);
+    }
+
+    @Test
+    public void addedTransition_SameOriginAndDestination(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 1));
+
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 2);
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertTrue(a.hasSymbol('b'));
+        Assert.assertEquals(a.countSymbols(), 2);
+        Assert.assertTrue(a.hasTransition(0, 'a', 1));
+        Assert.assertTrue(a.hasTransition(0, 'b', 1));
+        Assert.assertEquals(a.countTransitions(), 2);
+    }
+
+    @Test
+    public void addedTransition_SameLetterAndDestination(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertTrue(a.hasState(2));
+        Assert.assertEquals(a.countStates(), 3);
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertEquals(a.countSymbols(), 1);
+        Assert.assertTrue(a.hasTransition(0, 'a', 2));
+        Assert.assertTrue(a.hasTransition(1, 'a', 2));
+        Assert.assertEquals(a.countTransitions(), 2);
+    }
+
+    @Test
+    public void addedTransition_Epsilon(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addTransition(0, Automate.Epsilon, 1));
+
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertEquals(a.countStates(), 2);
+        Assert.assertFalse(a.hasSymbol(Automate.Epsilon));
+        Assert.assertEquals(a.countSymbols(), 0);
+        Assert.assertTrue(a.hasTransition(0, Automate.Epsilon, 1));
+        Assert.assertEquals(a.countTransitions(), 1);
+    }
+
 }
