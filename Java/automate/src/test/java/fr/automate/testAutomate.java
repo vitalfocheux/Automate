@@ -1,5 +1,8 @@
 package fr.automate;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -1437,6 +1440,506 @@ public class testAutomate {
         Assert.assertTrue(b.hasSymbol('a'));
         Assert.assertTrue(b.hasSymbol('b'));
         Assert.assertEquals(b.countSymbols(), 2);
+    }
+
+    @Test
+    public void createComplete_NotComplete(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addState(3));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'b', 0));
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertTrue(a.addTransition(2, 'a', 2));
+        Assert.assertTrue(a.addTransition(2, 'b', 3));
+        a.setStateInitial(0);
+        a.setStateFinal(3);
+        Assert.assertFalse(a.isComplete());
+
+        Assert.assertTrue(a.isValid());
+        Assert.assertFalse(a.isLanguageEmpty());
+        Assert.assertTrue(a.hasState(0));
+        Assert.assertTrue(a.hasState(1));
+        Assert.assertTrue(a.hasState(2));
+        Assert.assertTrue(a.hasState(3));
+        Assert.assertEquals(a.countStates(), 4);
+        Assert.assertTrue(a.hasSymbol('a'));
+        Assert.assertTrue(a.hasSymbol('b'));
+        Assert.assertEquals(a.countSymbols(), 2);
+        Assert.assertTrue(a.hasTransition(0, 'b', 0));
+        Assert.assertTrue(a.hasTransition(1, 'a', 1));
+        Assert.assertTrue(a.hasTransition(2, 'a', 2));
+        Assert.assertTrue(a.hasTransition(2, 'b', 3));
+        Assert.assertEquals(a.countTransitions(), 4);
+
+        Automate b = Automate.createComplete(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertTrue(b.isComplete());
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, b));
+    }
+
+    @Test
+    public void createComplete_NoTransition(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        Assert.assertFalse(a.isComplete());
+
+        Automate b = Automate.createComplete(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertTrue(b.isLanguageEmpty());
+        Assert.assertTrue(b.isComplete());
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertEquals(b.countSymbols(), 1);
+        Assert.assertTrue(equivalent(a, b));
+    }
+
+    @Test
+    public void createComplete_WithMaxState(){
+        Assert.assertTrue(a.addState(0)); 
+        Assert.assertTrue(a.addState(Integer.MAX_VALUE));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        a.setStateInitial(0);
+        a.setStateFinal(Integer.MAX_VALUE);
+        Assert.assertTrue(a.addTransition(0, 'a', Integer.MAX_VALUE));
+
+        Automate b = Automate.createComplete(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertTrue(b.isComplete());
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, b));
+    }
+
+    @Test
+    public void createComplete_MissingState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'a', 0));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        Assert.assertFalse(a.isComplete());
+
+        Automate b = Automate.createComplete(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertTrue(b.isComplete());
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertEquals(b.countSymbols(), 1);
+        Assert.assertTrue(equivalent(a, b));
+    }
+
+    @Test
+    public void createComplete_Flecy(){
+        Assert.assertTrue(a.addState(0));   
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+
+        Automate b = Automate.createComplete(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertTrue(b.isComplete());
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, b));
+    }
+
+    @Test
+    public void createComplement_NotCompleteAndAlreadyDeterministic(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        a.setStateFinal(2);
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertFalse(a.isComplete());
+        Assert.assertTrue(a.isDeterministic());
+
+        Automate b = Automate.createComplement(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertTrue(b.isComplete());
+        Assert.assertTrue(b.isDeterministic());
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, b));
+    }
+
+    @Test
+    public void createComplement_AlreadyCompleteAndAlreadyDeterministic(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        a.setStateFinal(2);
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'b', 1));
+        Assert.assertTrue(a.addTransition(2, 'a', 2));
+        Assert.assertTrue(a.addTransition(2, 'b', 2));
+        Assert.assertTrue(a.isComplete());
+        Assert.assertTrue(a.isDeterministic());
+
+        Automate b = Automate.createComplement(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertTrue(b.isComplete());
+        Assert.assertTrue(b.isDeterministic());
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, b));
+    }
+
+    @Test
+    public void createComplement_NotCompleteAndNotDeterministic(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        a.setStateFinal(2);
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertFalse(a.isComplete());
+        Assert.assertFalse(a.isDeterministic());
+
+        Automate b = Automate.createComplement(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertTrue(b.isComplete());
+        Assert.assertTrue(b.isDeterministic());
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, b));
+    }
+
+    @Test
+    public void createComplement_NoInitialState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        a.setStateFinal(1);
+        a.setStateFinal(2);
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertFalse(a.isComplete());
+        Assert.assertFalse(a.isDeterministic());
+
+        Automate b = Automate.createComplement(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertTrue(b.isComplete());
+        Assert.assertTrue(b.isDeterministic());
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, b));
+    }
+
+    @Test
+    public void createComplement_MultipleInitialState(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'b', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Assert.assertFalse(a.isDeterministic());
+        Assert.assertFalse(a.isComplete());
+
+        Automate b = Automate.createComplement(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertTrue(b.isComplete());
+        Assert.assertTrue(b.isDeterministic());
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, b));
+    }
+
+    @Test
+    public void createMirror_Empty(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+
+        Automate b = Automate.createMirror(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertTrue(b.isLanguageEmpty());
+        Assert.assertEquals(b.countStates(), 1);
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertEquals(b.countSymbols(), 1);
+        Assert.assertEquals(b.countTransitions(), 0);
+        Assert.assertTrue(equivalentMirror(a, b));
+    }
+
+    @Test
+    public void createMirror_Mirror(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+
+        Automate b = Automate.createMirror(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertEquals(b.countStates(), 2);
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertEquals(b.countSymbols(), 1);
+        Assert.assertEquals(b.countTransitions(), 1);
+        Assert.assertTrue(equivalentMirror(a, b));
+    }
+
+    @Test
+    public void createMirror_DeterministicAndNotCompleteWithMultipleFinalState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        a.setStateFinal(2);
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.isDeterministic());
+        Assert.assertFalse(a.isComplete());
+
+        Automate b = Automate.createMirror(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertEquals(b.countStates(), 3);
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertEquals(b.countTransitions(), 2);
+        Assert.assertTrue(equivalentMirror(a, b));
+    }
+
+    @Test
+    public void createMirror_DeterministicAndNotCompleteWithOneFinalState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.isDeterministic());
+        Assert.assertFalse(a.isComplete());
+
+        Automate b = Automate.createMirror(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertEquals(b.countStates(), 3);
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertEquals(b.countTransitions(), 2);
+        Assert.assertTrue(equivalentMirror(a, b));
+    }
+
+    @Test
+    public void createMirror_NotDeterministicAndComplete(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        a.setStateFinal(2);
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'b', 2));
+        Assert.assertTrue(a.addTransition(2, 'a', 2));
+        Assert.assertTrue(a.addTransition(2, 'b', 2));
+        Assert.assertFalse(a.isDeterministic());
+        Assert.assertTrue(a.isComplete());
+
+        Automate b = Automate.createMirror(a);
+
+        Assert.assertTrue(b.isValid());
+        Assert.assertFalse(b.isLanguageEmpty());
+        Assert.assertEquals(b.countStates(), 3);
+        Assert.assertTrue(b.hasSymbol('a'));
+        Assert.assertTrue(b.hasSymbol('b'));
+        Assert.assertEquals(b.countSymbols(), 2);
+        Assert.assertEquals(b.countTransitions(), 7);
+        Assert.assertTrue(equivalentMirror(a, b));
+    }
+
+    @Test
+    public void makeTransition_NoTransition(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        Set<Integer> res = new HashSet<>(), attend = new HashSet<>();
+        res = a.makeTransition(new HashSet<Integer>(), 'a');
+        Assert.assertEquals(res, attend);
+    }
+
+    @Test
+    public void makeTransition_NoState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        Set<Integer> res = new HashSet<>(), attend = new HashSet<>(), origin = new HashSet<>();
+        origin.add(2);
+        res = a.makeTransition(origin, 'a');
+        Assert.assertEquals(res, attend);
+    }
+
+    @Test
+    public void makeTransition_NoSymbol(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        Set<Integer> res = new HashSet<>(), attend = new HashSet<>(), origin = new HashSet<>();
+        origin.add(0);
+        res = a.makeTransition(origin, 'b');
+        Assert.assertEquals(res, attend);
+    }
+
+    @Test
+    public void makeTransition_OriginNullAndNoSymbol(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        Set<Integer> res = new HashSet<>(), attend = new HashSet<>();
+        res = a.makeTransition(new HashSet<Integer>(), 'b');
+        Assert.assertEquals(res, attend);
+    }
+
+    @Test
+    public void makeTransition_NoStateNoSymbol(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        Set<Integer> res = new HashSet<>(), attend = new HashSet<>(), origin = new HashSet<>();
+        origin.add(2);
+        res = a.makeTransition(origin, 'b');
+        Assert.assertEquals(res, attend);
+    }
+
+    @Test
+    public void makeTransition_NoTransitionAndNoSymbol(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+        Set<Integer> res = new HashSet<>(), attend = new HashSet<>(), origin = new HashSet<>();
+        origin.add(1);
+        res = a.makeTransition(origin, 'b');
+        Assert.assertEquals(res, attend);
+    }
+
+    @Test
+    public void makeTransition_Success(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Set<Integer> res = new HashSet<>(), attend = new HashSet<>(), origin = new HashSet<>();
+        origin.add(0); origin.add(1);
+        attend.add(1); attend.add(2); attend.add(3);
+
+        res = a.makeTransition(origin, 'a');
+        Assert.assertFalse(res.isEmpty());
+        Assert.assertEquals(res, attend);
     }
 
 }
