@@ -1942,4 +1942,489 @@ public class testAutomate {
         Assert.assertEquals(res, attend);
     }
 
+    @Test
+    public void readString_NotInAlphabetWithFinalAndInitialState(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Set<Integer> res = a.readString("abc");
+        Assert.assertEquals(res, new HashSet<Integer>());
+    }
+
+    @Test
+    public void readString_NotInAlphabetWithNoFinalAndInitialState(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Set<Integer> res = a.readString("abc");
+        Assert.assertEquals(res, new HashSet<Integer>());
+    }
+
+    @Test
+    public void readString_NoStateInitial(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateFinal(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Set<Integer> res = a.readString("a");
+        Assert.assertEquals(res, new HashSet<Integer>());
+    }
+
+    @Test
+    public void readString_NoStateFinal(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Set<Integer> res = a.readString("a"), attend = new HashSet<>();
+        attend.add(1); attend.add(2); attend.add(3);
+        Assert.assertEquals(res, attend);
+    }
+
+    @Test
+    public void readString_NoStateFinalAndNoStateInitial(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Set<Integer> res = a.readString("a");
+        Assert.assertEquals(res, new HashSet<Integer>());
+    }
+
+    @Test
+    public void readString_ToShortWord(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Set<Integer> res = a.readString("ab"), attend = new HashSet<>();
+        attend.add(3); attend.add(4);
+        Assert.assertEquals(res, attend);
+    }
+
+    @Test
+    public void readString_ToLongWord(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Set<Integer> res = a.readString("abbaa");
+        Assert.assertEquals(res, new HashSet<Integer>());
+    }
+
+    @Test
+    public void readString_StringNullAccept(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+
+        a.setStateInitial(0);
+        a.setStateFinal(0); 
+        a.setStateFinal(1);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 0));
+        Assert.assertTrue(a.addTransition(1, 'b', 0));
+
+        Set<Integer> res = a.readString(""), attend = new HashSet<>();
+        attend.add(0);
+        Assert.assertEquals(res, attend);
+    }
+
+    @Test
+    public void match_NotInAlphabetWithFinalAndInitialState(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Assert.assertFalse(a.match("abc"));
+    }
+
+    @Test
+    public void match_NotInAlphabetWithNoFinalAndInitialState(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Assert.assertFalse(a.match("abc"));
+    }
+
+    @Test
+    public void match_NoStateInitial(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateFinal(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Assert.assertFalse(a.match("a"));
+    }
+
+    @Test
+    public void match_NoStateFinal(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Assert.assertFalse(a.match("a"));
+    }
+
+    @Test
+    public void match_NoStateFinalAndNoStateInitial(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Assert.assertFalse(a.match("a"));
+    }
+
+    @Test
+    public void match_ToShortWord(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+
+        Assert.assertFalse(a.match("ab"));
+    }
+
+    @Test
+    public void match_ToLongWord(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(1);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+
+        Assert.assertFalse(a.match("abbaa"));
+    }
+
+    @Test
+    public void match_StringNullAccept(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+
+        a.setStateInitial(0);
+        a.setStateFinal(0); 
+        a.setStateFinal(1);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 0));
+        Assert.assertTrue(a.addTransition(1, 'b', 0));
+
+        Assert.assertTrue(a.match(""));
+    }
+
+    @Test
+    public void match_StringNullNotAccept(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 0));
+        Assert.assertTrue(a.addTransition(1, 'b', 0));
+
+        Assert.assertFalse(a.match(""));
+    }
+
+    @Test
+    public void isLanguageEmpty_NotEmpty(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+        Assert.assertTrue(a.addTransition(0, 'a', 0));
+        Assert.assertFalse(a.isLanguageEmpty());
+    }
+
+    @Test
+    public void isLanguageEmpty_NoFinalState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.isLanguageEmpty());
+    }
+
+    @Test
+    public void isLanguageEmpty_Empty(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        Assert.assertTrue(a.isLanguageEmpty());
+    }
+
+    @Test
+    public void isLanguageEmpty_MultipleInitialStateWithAcceptWord(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(1);
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertFalse(a.isLanguageEmpty());
+    }
+
+    @Test
+    public void isLanguageEmpty_NoInitial(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        a.setStateFinal(1);
+        Assert.assertTrue(a.isLanguageEmpty());
+    }
+
+    @Test
+    public void isLanguageEmpty_NotLinked(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(1, 'a', 0));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        a.setStateInitial(0);
+        a.setStateFinal(2);
+        Assert.assertTrue(a.isLanguageEmpty());
+    }
+
 }
