@@ -3382,4 +3382,480 @@ public class testAutomate {
         Assert.assertFalse(equivalent(lhs, res));
     }
 
+    @Test
+    public void hasEmptyIntersectionWith_NoEmpty(){
+        Automate lhs = new Automate(), rhs = new Automate();
+
+        Assert.assertTrue(lhs.addState(0));
+        Assert.assertTrue(lhs.addState(1));
+        Assert.assertTrue(lhs.addSymbol('a'));
+        Assert.assertTrue(lhs.addSymbol('b'));
+        Assert.assertTrue(lhs.addTransition(0, 'a', 1));
+        Assert.assertTrue(lhs.addTransition(1, 'a', 1));
+        Assert.assertTrue(lhs.addTransition(1, 'b', 1));
+        lhs.setStateFinal(0);
+        lhs.setStateFinal(1);
+
+        Assert.assertTrue(rhs.addState(0));
+        Assert.assertTrue(rhs.addState(1));
+        Assert.assertTrue(rhs.addSymbol('a'));
+        Assert.assertTrue(rhs.addSymbol('b'));
+        Assert.assertTrue(rhs.addTransition(0, 'a', 0));
+        Assert.assertTrue(rhs.addTransition(0, 'b', 1));
+        Assert.assertTrue(rhs.addTransition(1, 'a', 0));
+        Assert.assertTrue(rhs.addTransition(1, 'b', 1));
+        rhs.setStateInitial(0);
+        rhs.setStateFinal(1);
+
+        Assert.assertFalse(lhs.hasEmptyIntersectionWith(rhs));
+    }
+
+    @Test
+    public void hasEmptyIntersectionWith_NotSameLetter(){
+        Automate lhs = new Automate(), rhs = new Automate();
+
+        Assert.assertTrue(lhs.addState(0));
+        Assert.assertTrue(lhs.addState(1));
+        Assert.assertTrue(lhs.addSymbol('a'));
+        Assert.assertTrue(lhs.addSymbol('b'));
+        Assert.assertTrue(lhs.addTransition(0, 'a', 1));
+        Assert.assertTrue(lhs.addTransition(1, 'a', 1));
+        Assert.assertTrue(lhs.addTransition(1, 'b', 1));
+        lhs.setStateFinal(0);
+        lhs.setStateFinal(1);
+
+        Assert.assertTrue(rhs.addState(0));
+        Assert.assertTrue(rhs.addState(1));
+        Assert.assertTrue(rhs.addSymbol('c'));
+        Assert.assertTrue(rhs.addSymbol('d'));
+        Assert.assertTrue(rhs.addTransition(0, 'c', 0));
+        Assert.assertTrue(rhs.addTransition(0, 'd', 1));
+        Assert.assertTrue(rhs.addTransition(1, 'c', 0));
+        Assert.assertTrue(rhs.addTransition(1, 'd', 1));
+        rhs.setStateInitial(0);
+        rhs.setStateFinal(1);
+
+        Assert.assertTrue(lhs.hasEmptyIntersectionWith(rhs));
+    }
+
+    @Test
+    public void hasEmptyIntersectionWith_LhsNoTransitionAndRhsNoTransition(){
+        Automate lhs = new Automate(), rhs = new Automate();
+
+        Assert.assertTrue(lhs.addState(0));
+        Assert.assertTrue(lhs.addSymbol('a'));
+        Assert.assertTrue(lhs.addSymbol('b'));
+        lhs.setStateInitial(0);
+        lhs.setStateFinal(0);
+
+        Assert.assertTrue(rhs.addState(0));
+        Assert.assertTrue(rhs.addState(1));
+        Assert.assertTrue(rhs.addSymbol('a'));
+        Assert.assertTrue(rhs.addSymbol('b'));
+        rhs.setStateInitial(0);
+        rhs.setStateFinal(1);
+
+        Assert.assertTrue(lhs.hasEmptyIntersectionWith(rhs));
+    }
+
+    @Test
+    public void hasEmptyIntersectionWith_LhsNoTransition(){
+        Automate lhs = new Automate(), rhs = new Automate();
+
+        Assert.assertTrue(lhs.addState(0));
+        Assert.assertTrue(lhs.addSymbol('a'));
+        Assert.assertTrue(lhs.addSymbol('b'));
+        lhs.setStateInitial(0);
+        lhs.setStateFinal(0);
+
+        Assert.assertTrue(rhs.addState(0));
+        Assert.assertTrue(rhs.addState(1));
+        Assert.assertTrue(rhs.addSymbol('a'));
+        Assert.assertTrue(rhs.addSymbol('b'));
+        Assert.assertTrue(rhs.addTransition(0, 'a', 1));
+        Assert.assertTrue(rhs.addTransition(1, 'b', 0));
+        rhs.setStateInitial(0);
+        rhs.setStateFinal(1);
+
+        Assert.assertTrue(lhs.hasEmptyIntersectionWith(rhs));
+    }
+
+    @Test
+    public void createDeterministic_DS2022(){
+        for(int i = 0; i < 7; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 5));
+        Assert.assertTrue(a.addTransition(0, 'b', 4));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        Assert.assertTrue(a.addTransition(1, 'b', 1));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 2));
+        Assert.assertTrue(a.addTransition(2, 'b', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 0));
+        Assert.assertTrue(a.addTransition(4, 'a', 3));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+        Assert.assertTrue(a.addTransition(5, 'a', 5));
+        Assert.assertTrue(a.addTransition(5, 'b', 4));
+        a.setStateInitial(0);
+        a.setStateFinal(3);
+
+        Automate res = Automate.createDeterministic(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, res));
+    }
+
+    @Test
+    public void createDeterministic_exemplePDF(){
+        for(int i = 0; i < 5; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(0, 'b', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.addTransition(1, 'b', 4));
+        Assert.assertTrue(a.addTransition(2, 'a', 2));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'b', 1));
+        Assert.assertTrue(a.addTransition(2, 'b', 2));
+        Assert.assertTrue(a.addTransition(3, 'a', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+        Assert.assertTrue(a.addTransition(4, 'b', 4));
+        a.setStateInitial(0);
+        a.setStateFinal(4);
+
+        Automate res = Automate.createDeterministic(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, res));
+    }
+
+    @Test
+    public void createDeterministic_AlreadyDeterministic(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'b', 1));
+        a.setStateInitial(0);   
+        a.setStateFinal(1);
+
+        Automate res = Automate.createDeterministic(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, res));
+    }
+
+    @Test
+    public void createDeterministic_NoInitialState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'b', 1));
+        a.setStateFinal(1);
+
+        Automate res = Automate.createDeterministic(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertTrue(res.isLanguageEmpty());
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, res));
+    }
+
+    @Test
+    public void createDeterministic_NoFinalState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'a', 0));
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'b', 1));
+        a.setStateInitial(0);
+
+        Automate res = Automate.createDeterministic(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertTrue(res.isLanguageEmpty());
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, res));
+    }
+
+    @Test
+    public void createDeterministic_MultipleInitialState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addState(3));
+        Assert.assertTrue(a.addState(4));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 3));
+        Assert.assertTrue(a.addTransition(2, 'b', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+        a.setStateInitial(0);
+        a.setStateInitial(1);
+        a.setStateFinal(4);
+
+        Automate res = Automate.createDeterministic(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, res));
+    }
+
+    @Test
+    public void createDeterministic_DS(){
+        for(int i = 0; i < 6; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 2));
+        Assert.assertTrue(a.addTransition(0, 'a', 3));
+        Assert.assertTrue(a.addTransition(1, 'a', 4));
+        Assert.assertTrue(a.addTransition(2, 'b', 5));
+        Assert.assertTrue(a.addTransition(3, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'b', 1));
+        Assert.assertTrue(a.addTransition(4, 'b', 2));
+        Assert.assertTrue(a.addTransition(5, 'a', 2));
+        Assert.assertTrue(a.addTransition(5, 'b', 4));
+        a.setStateInitial(0);
+        a.setStateInitial(5);
+        a.setStateFinal(2);
+
+        Automate res = Automate.createDeterministic(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, res));
+    }
+
+    @Test
+    public void createDeterministic_NoTransition(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+
+        Automate res = Automate.createDeterministic(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(equivalent(a, res));
+    }
+
+    @Test
+    public void createDeterministic_AlreadyMinimal(){
+        for(int i = 0; i < 7; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.addTransition(0, 'c', 3));
+        Assert.assertTrue(a.addTransition(1, 'a', 6));
+        Assert.assertTrue(a.addTransition(1, 'b', 0));
+        Assert.assertTrue(a.addTransition(1, 'c', 6));
+        Assert.assertTrue(a.addTransition(2, 'a', 6));
+        Assert.assertTrue(a.addTransition(2, 'b', 4));
+        Assert.assertTrue(a.addTransition(2, 'c', 0));
+        Assert.assertTrue(a.addTransition(3, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'b', 6));
+        Assert.assertTrue(a.addTransition(3, 'c', 6));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+        Assert.assertTrue(a.addTransition(4, 'b', 5));
+        Assert.assertTrue(a.addTransition(4, 'c', 3));
+        Assert.assertTrue(a.addTransition(5, 'a', 6));
+        Assert.assertTrue(a.addTransition(5, 'b', 4));
+        Assert.assertTrue(a.addTransition(5, 'c', 6));
+        Assert.assertTrue(a.addTransition(6, 'a', 6));
+        Assert.assertTrue(a.addTransition(6, 'b', 6));
+        Assert.assertTrue(a.addTransition(6, 'c', 6));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+        a.setStateFinal(4);
+
+        Assert.assertTrue(a.isDeterministic());
+
+        Automate res = Automate.createDeterministic(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertTrue(res.hasSymbol('c'));
+        Assert.assertEquals(res.countSymbols(), 3);
+        Assert.assertTrue(equivalent(a, res));
+    }
+
+    @Test
+    public void isIncludedIn_Same(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        a.setStateInitial(0);
+        a.setStateFinal(2);
+
+        Assert.assertTrue(a.isIncludedIn(a));
+    }
+
+    @Test
+    public void isIncludedIn_DifferentSymbols(){
+        Automate a2 = new Automate();
+
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        a.setStateInitial(0);
+        a.setStateFinal(2);
+
+        Assert.assertTrue(a2.addState(0));
+        Assert.assertTrue(a2.addState(1));
+        Assert.assertTrue(a2.addState(2));
+        Assert.assertTrue(a2.addSymbol('b'));
+        Assert.assertTrue(a2.addTransition(0, 'b', 1));
+        Assert.assertTrue(a2.addTransition(1, 'b', 2));
+        a2.setStateInitial(0);
+        a2.setStateFinal(2);
+
+        Assert.assertFalse(a.isIncludedIn(a2));
+        Assert.assertFalse(a2.isIncludedIn(a));
+    }
+
+    @Test
+    public void isIncludedIn_EmptyInEmpty(){
+        Automate a2 = new Automate();
+
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addSymbol('a'));
+
+        Assert.assertTrue(a2.addState(0));
+        Assert.assertTrue(a2.addSymbol('a'));
+
+        Assert.assertTrue(a.isIncludedIn(a2));
+        Assert.assertTrue(a2.isIncludedIn(a));
+    }
+
+    @Test
+    public void isIncludedIn_Royer1(){
+        Automate a2 = new Automate();
+
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addSymbol('d'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+
+        Assert.assertTrue(a2.addState(0));
+        Assert.assertTrue(a2.addState(1));
+        Assert.assertTrue(a2.addSymbol('a'));
+        Assert.assertTrue(a2.addTransition(0, 'a', 1));
+        a2.setStateInitial(0);
+        a2.setStateFinal(1);
+
+        Assert.assertTrue(a.isIncludedIn(a2));
+    }
+
+    @Test
+    public void isIncludedIn_Royer2(){
+        Automate a2 = new Automate();
+
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addState(3));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addSymbol('d'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'b', 2));
+        Assert.assertTrue(a.addTransition(2, 'c', 3));
+        Assert.assertTrue(a.addTransition(2, 'd', 3));
+        a.setStateInitial(0);
+        a.setStateFinal(3);
+
+        Assert.assertTrue(a2.addState(0));
+        Assert.assertTrue(a2.addState(1));
+        Assert.assertTrue(a2.addSymbol('a'));
+        Assert.assertTrue(a2.addTransition(0, 'a', 1));
+        a2.setStateInitial(0);
+        a2.setStateFinal(1);
+
+        Assert.assertFalse(a.isIncludedIn(a2));
+    }
+
 }
