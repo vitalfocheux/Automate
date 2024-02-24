@@ -3858,4 +3858,1293 @@ public class testAutomate {
         Assert.assertFalse(a.isIncludedIn(a2));
     }
 
+    @Test
+    public void createMinimalMoore_AlreadyCompleteAndAlreadyDeterministic(){
+        for(int i = 0; i < 6; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 1));
+        Assert.assertTrue(a.addTransition(2, 'b', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'b', 5));
+        Assert.assertTrue(a.addTransition(4, 'a', 3));
+        Assert.assertTrue(a.addTransition(4, 'b', 5));
+        Assert.assertTrue(a.addTransition(5, 'a', 5));
+        Assert.assertTrue(a.addTransition(5, 'b', 5));
+        a.setStateInitial(0);
+        a.setStateFinal(3);
+        a.setStateFinal(4);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 4);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_AlreadyMinimal_ex18_1TD(){
+        for(int i = 0; i < 6; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.addTransition(0, 'b', 4));
+        Assert.assertTrue(a.addTransition(0, 'c', 5));
+        Assert.assertTrue(a.addTransition(1, 'b', 0));
+        Assert.assertTrue(a.addTransition(2, 'c', 0));
+        Assert.assertTrue(a.addTransition(3, 'b', 4));
+        Assert.assertTrue(a.addTransition(3, 'c', 5));
+        Assert.assertTrue(a.addTransition(4, 'b', 3));
+        Assert.assertTrue(a.addTransition(5, 'a', 3));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+        a.setStateFinal(3); 
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());  
+        Assert.assertEquals(res.countStates(), 7);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertTrue(res.hasSymbol('c'));
+        Assert.assertEquals(res.countSymbols(), 3);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NoInitialState(){
+        for(int i = 0; i < 6; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));  
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 1));
+        Assert.assertTrue(a.addTransition(2, 'b', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'b', 5));
+        Assert.assertTrue(a.addTransition(4, 'a', 3));
+        Assert.assertTrue(a.addTransition(4, 'b', 5));
+        Assert.assertTrue(a.addTransition(5, 'a', 5));
+        Assert.assertTrue(a.addTransition(5, 'b', 5));
+        a.setStateFinal(3);
+        a.setStateFinal(4);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertTrue(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());    
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NonAccessibleState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 0));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertEquals(res.countSymbols(), 1);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NonAccessibleStatesWithTransition(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 0));
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertTrue(a.addTransition(2, 'a', 1));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertEquals(res.countSymbols(), 1);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NonAccessibleStatesWithTransitionNonDeterminist(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 0));
+        Assert.assertTrue(a.addTransition(0, 'b', 0));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        Assert.assertTrue(a.addTransition(2, 'a', 1));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_AlreadyMinimal1(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(7, 'a', 10));
+        Assert.assertTrue(a.addTransition(7, 'b', 13));
+        Assert.assertTrue(a.addTransition(10, 'a', 13));
+        Assert.assertTrue(a.addTransition(10, 'b', 16));
+        Assert.assertTrue(a.addTransition(13, 'a', 10));
+        Assert.assertTrue(a.addTransition(13, 'b', 19));
+        Assert.assertTrue(a.addTransition(16, 'a', 19));
+        Assert.assertTrue(a.addTransition(16, 'b', 22));
+        Assert.assertTrue(a.addTransition(19, 'a', 16));
+        Assert.assertTrue(a.addTransition(19, 'b', 22));
+        Assert.assertTrue(a.addTransition(22, 'a', 22));
+        Assert.assertTrue(a.addTransition(22, 'b', 22));
+        a.setStateInitial(7);
+        a.setStateFinal(19);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 6);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_AlreadyMinimal2(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addSymbol('0'));
+        Assert.assertTrue(a.addSymbol('1'));
+        Assert.assertTrue(a.addTransition(7, '0', 10));
+        Assert.assertTrue(a.addTransition(7, '1', 13));
+        Assert.assertTrue(a.addTransition(10, '0', 19));
+        Assert.assertTrue(a.addTransition(10, '1', 22));    
+        Assert.assertTrue(a.addTransition(13, '0', 7));
+        Assert.assertTrue(a.addTransition(13, '1', 7));
+        Assert.assertTrue(a.addTransition(16, '0', 22));    
+        Assert.assertTrue(a.addTransition(16, '1', 19));
+        Assert.assertTrue(a.addTransition(19, '0', 16));
+        Assert.assertTrue(a.addTransition(19, '1', 22));
+        Assert.assertTrue(a.addTransition(22, '0', 16));
+        Assert.assertTrue(a.addTransition(22, '1', 19));
+        a.setStateInitial(7);
+        a.setStateFinal(22);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 6);
+        Assert.assertTrue(res.hasSymbol('0'));
+        Assert.assertTrue(res.hasSymbol('1'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NotMinimal1(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(7, 'a', 10));
+        Assert.assertTrue(a.addTransition(7, 'b', 13));
+        Assert.assertTrue(a.addTransition(10, 'a', 13));
+        Assert.assertTrue(a.addTransition(10, 'b', 16));
+        Assert.assertTrue(a.addTransition(13, 'a', 10));
+        Assert.assertTrue(a.addTransition(13, 'b', 19));
+        Assert.assertTrue(a.addTransition(16, 'a', 19));
+        Assert.assertTrue(a.addTransition(16, 'b', 22));
+        Assert.assertTrue(a.addTransition(19, 'a', 16));
+        Assert.assertTrue(a.addTransition(19, 'b', 22));
+        Assert.assertTrue(a.addTransition(22, 'a', 22));
+        Assert.assertTrue(a.addTransition(22, 'b', 22));
+        a.setStateInitial(7);
+        a.setStateFinal(16);
+        a.setStateFinal(19);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 4);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NotMinimal2(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(7, 'a', 10));
+        Assert.assertTrue(a.addTransition(7, 'b', 13));
+        Assert.assertTrue(a.addTransition(10, 'a', 16));
+        Assert.assertTrue(a.addTransition(10, 'b', 16));
+        Assert.assertTrue(a.addTransition(13, 'a', 13));
+        Assert.assertTrue(a.addTransition(13, 'b', 13));
+        Assert.assertTrue(a.addTransition(16, 'a', 16));
+        Assert.assertTrue(a.addTransition(16, 'b', 16));
+        a.setStateInitial(7);
+        a.setStateFinal(10);
+        a.setStateFinal(16);
+
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 3);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NotMinimal3(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(7, 'a', 22));
+        Assert.assertTrue(a.addTransition(7, 'b', 10));
+        Assert.assertTrue(a.addTransition(10, 'a', 19));
+        Assert.assertTrue(a.addTransition(10, 'b', 16));
+        Assert.assertTrue(a.addTransition(13, 'a', 13));
+        Assert.assertTrue(a.addTransition(13, 'b', 22));
+        Assert.assertTrue(a.addTransition(16, 'a', 16));
+        Assert.assertTrue(a.addTransition(16, 'b', 7));
+        Assert.assertTrue(a.addTransition(19, 'a', 10));
+        Assert.assertTrue(a.addTransition(19, 'b', 13));
+        Assert.assertTrue(a.addTransition(22, 'a', 22));
+        Assert.assertTrue(a.addTransition(22, 'b', 19));
+        a.setStateInitial(7);
+        a.setStateFinal(7);
+        a.setStateFinal(22);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 3);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NotMinimal4Buronfosse(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addState(25));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(7, 'a', 10));
+        Assert.assertTrue(a.addTransition(7, 'b', 13));
+        Assert.assertTrue(a.addTransition(10, 'a', 13));
+        Assert.assertTrue(a.addTransition(10, 'b', 16));
+        Assert.assertTrue(a.addTransition(13, 'a', 10));
+        Assert.assertTrue(a.addTransition(13, 'b', 19));
+        Assert.assertTrue(a.addTransition(16, 'a', 19));
+        Assert.assertTrue(a.addTransition(16, 'b', 22));
+        Assert.assertTrue(a.addTransition(19, 'a', 16));
+        Assert.assertTrue(a.addTransition(19, 'b', 22));
+        Assert.assertTrue(a.addTransition(22, 'a', 22));
+        Assert.assertTrue(a.addTransition(22, 'b', 22));
+        Assert.assertTrue(a.addTransition(25, 'a', 16));
+        Assert.assertTrue(a.addTransition(25, 'b', 22));
+        a.setStateInitial(7);
+        a.setStateFinal(16);
+        a.setStateFinal(19);
+        a.setStateFinal(25);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 4);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NotMinimal5Pirolley(){
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addState(25));
+        Assert.assertTrue(a.addState(28));
+        Assert.assertTrue(a.addState(31));
+        Assert.assertTrue(a.addState(34));
+        Assert.assertTrue(a.addState(37));  
+        Assert.assertTrue(a.addState(40));
+        Assert.assertTrue(a.addState(43));
+        Assert.assertTrue(a.addState(46));
+        Assert.assertTrue(a.addState(49));
+        Assert.assertTrue(a.addState(52));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addTransition(10, 'a', 13));
+        Assert.assertTrue(a.addTransition(13, 'c', 22));
+        Assert.assertTrue(a.addTransition(16, 'b', 19));
+        Assert.assertTrue(a.addTransition(19, 'c', 22));
+        Assert.assertTrue(a.addTransition(22, 'a', 22));
+        Assert.assertTrue(a.addTransition(22, 'b', 22));
+        Assert.assertTrue(a.addTransition(22, 'c', 22));
+        Assert.assertTrue(a.addTransition(22, 'c', 25));
+        Assert.assertTrue(a.addTransition(22, 'c', 31));
+        Assert.assertTrue(a.addTransition(25, 'a', 28));
+        Assert.assertTrue(a.addTransition(31, 'b', 34));
+        Assert.assertTrue(a.addTransition(37, 'a', 43));
+        Assert.assertTrue(a.addTransition(40, 'b', 43));
+        Assert.assertTrue(a.addTransition(43, 'c', 46));
+        Assert.assertTrue(a.addTransition(46, 'a', 49));
+        Assert.assertTrue(a.addTransition(46, 'b', 52));
+        a.setStateInitial(10);
+        a.setStateInitial(16);
+        a.setStateInitial(37);
+        a.setStateInitial(40);
+        a.setStateFinal(28);
+        a.setStateFinal(34);
+        a.setStateFinal(49);
+        a.setStateFinal(52);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 6);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertTrue(res.hasSymbol('c'));
+        Assert.assertEquals(res.countSymbols(), 3);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_EmptyRolletViprey(){
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertTrue(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_Leonard(){
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(13, 'a', 10));
+        Assert.assertTrue(a.addTransition(13, 'b', 16));
+        Assert.assertTrue(a.addTransition(16, 'a', 10));
+        a.setStateInitial(10);
+        a.setStateFinal(10);
+        a.setStateFinal(13);
+        a.setStateFinal(16);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 2);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_Gasca(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addTransition(7, 'a', 10));
+        Assert.assertTrue(a.addTransition(7, 'b', 10));
+        Assert.assertTrue(a.addTransition(7, 'c', 16));
+        Assert.assertTrue(a.addTransition(10, 'a', 10));
+        Assert.assertTrue(a.addTransition(10, 'b', 10));
+        Assert.assertTrue(a.addTransition(10, 'c', 10));
+        Assert.assertTrue(a.addTransition(13, 'a', 7));
+        Assert.assertTrue(a.addTransition(13, 'b', 13));
+        Assert.assertTrue(a.addTransition(13, 'c', 16));
+        Assert.assertTrue(a.addTransition(16, 'a', 16));
+        Assert.assertTrue(a.addTransition(16, 'b', 16));
+        Assert.assertTrue(a.addTransition(16, 'c', 16));
+        a.setStateInitial(7);
+        a.setStateFinal(10);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 3);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertTrue(res.hasSymbol('c'));
+        Assert.assertEquals(res.countSymbols(), 3);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NonAccessibleStateGasca(){
+        for(int i = 0; i < 4; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 1));
+        Assert.assertTrue(a.addTransition(0, 'c', 3));
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'b', 1));
+        Assert.assertTrue(a.addTransition(1, 'c', 1));
+        Assert.assertTrue(a.addTransition(2, 'a', 0));
+        Assert.assertTrue(a.addTransition(2, 'b', 2));
+        Assert.assertTrue(a.addTransition(2, 'c', 3));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 3));
+        Assert.assertTrue(a.addTransition(3, 'c', 3));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 3);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertTrue(res.hasSymbol('c'));
+        Assert.assertEquals(res.countSymbols(), 3);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalMoore_NonAccessibleStatePereiraGehant(){
+        for(int i = 0; i < 4; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addSymbol('d'));
+        Assert.assertTrue(a.addTransition(0, 'a', 0));
+        Assert.assertTrue(a.addTransition(0, 'b', 0));
+        Assert.assertTrue(a.addTransition(0, 'c', 0));
+        a.setStateInitial(1);
+        a.setStateFinal(0);
+        a.setStateFinal(1);
+
+        Automate res = Automate.createMinimalMoore(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 2);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertTrue(res.hasSymbol('c'));
+        Assert.assertTrue(res.hasSymbol('d'));
+        Assert.assertEquals(res.countSymbols(), 4);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_ExempleCours(){
+        for(int i = 0; i < 6; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 1));
+        Assert.assertTrue(a.addTransition(2, 'b', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'b', 5));
+        Assert.assertTrue(a.addTransition(4, 'a', 3));
+        Assert.assertTrue(a.addTransition(4, 'b', 5));
+        Assert.assertTrue(a.addTransition(5, 'a', 5));
+        Assert.assertTrue(a.addTransition(5, 'b', 5));
+        a.setStateInitial(0);
+        a.setStateFinal(3);
+        a.setStateFinal(4);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 4);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NoInitialState(){
+        for(int i = 0; i < 6; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 1));
+        Assert.assertTrue(a.addTransition(2, 'b', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'b', 5));
+        Assert.assertTrue(a.addTransition(4, 'a', 3));
+        Assert.assertTrue(a.addTransition(4, 'b', 5));
+        Assert.assertTrue(a.addTransition(5, 'a', 5));
+        Assert.assertTrue(a.addTransition(5, 'b', 5));
+        a.setStateFinal(3);
+        a.setStateFinal(4);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+    
+    @Test
+    public void createMinimalBrzozowski_NoFinalState(){
+        for(int i = 0; i < 6; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 1));
+        Assert.assertTrue(a.addTransition(2, 'b', 4));
+        Assert.assertTrue(a.addTransition(3, 'a', 4));
+        Assert.assertTrue(a.addTransition(3, 'b', 5));
+        Assert.assertTrue(a.addTransition(4, 'a', 3));
+        Assert.assertTrue(a.addTransition(4, 'b', 5));
+        Assert.assertTrue(a.addTransition(5, 'a', 5));
+        Assert.assertTrue(a.addTransition(5, 'b', 5));
+        a.setStateInitial(0);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertTrue(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_DS2022ExoDeter(){
+        for(int i = 0; i < 6; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'a', 5));
+        Assert.assertTrue(a.addTransition(0, 'b', 4));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        Assert.assertTrue(a.addTransition(1, 'b', 1));
+        Assert.assertTrue(a.addTransition(1, 'b', 3));
+        Assert.assertTrue(a.addTransition(2, 'a', 2));
+        Assert.assertTrue(a.addTransition(2, 'b', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 0));
+        Assert.assertTrue(a.addTransition(4, 'a', 3));
+        Assert.assertTrue(a.addTransition(4, 'a', 4));
+        Assert.assertTrue(a.addTransition(5, 'a', 5));
+        Assert.assertTrue(a.addTransition(5, 'b', 4));
+        a.setStateInitial(0);
+        a.setStateFinal(3);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 15);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NonAccessibleState(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 0));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertEquals(res.countSymbols(), 1);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NonAccessibleStatesWithTransition(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addTransition(0, 'a', 0));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        Assert.assertTrue(a.addTransition(2, 'a', 1));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertEquals(res.countSymbols(), 1);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NonAccessibleStatesWithTransitionNonDeterminist(){
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(0, 'a', 0));
+        Assert.assertTrue(a.addTransition(0, 'b', 0));
+        Assert.assertTrue(a.addTransition(1, 'a', 2));
+        Assert.assertTrue(a.addTransition(2, 'a', 1));
+        a.setStateInitial(0);
+        a.setStateFinal(0);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_AlreadyMinimal1(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(7, 'a', 10));
+        Assert.assertTrue(a.addTransition(7, 'b', 13));
+        Assert.assertTrue(a.addTransition(10, 'a', 13));
+        Assert.assertTrue(a.addTransition(10, 'b', 16));
+        Assert.assertTrue(a.addTransition(13, 'a', 10));
+        Assert.assertTrue(a.addTransition(13, 'b', 19));
+        Assert.assertTrue(a.addTransition(16, 'a', 19));
+        Assert.assertTrue(a.addTransition(16, 'b', 22));
+        Assert.assertTrue(a.addTransition(19, 'a', 16));
+        Assert.assertTrue(a.addTransition(19, 'b', 22));
+        Assert.assertTrue(a.addTransition(22, 'a', 22));
+        Assert.assertTrue(a.addTransition(22, 'b', 22));
+        a.setStateInitial(7);
+        a.setStateFinal(19);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 6);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_AlreadyMinimal2(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addSymbol('0'));
+        Assert.assertTrue(a.addSymbol('1'));
+        Assert.assertTrue(a.addTransition(7, '0', 10));
+        Assert.assertTrue(a.addTransition(7, '1', 13));
+        Assert.assertTrue(a.addTransition(10, '0', 19));
+        Assert.assertTrue(a.addTransition(10, '1', 22));    
+        Assert.assertTrue(a.addTransition(13, '0', 7));
+        Assert.assertTrue(a.addTransition(13, '1', 7));
+        Assert.assertTrue(a.addTransition(16, '0', 22));    
+        Assert.assertTrue(a.addTransition(16, '1', 19));
+        Assert.assertTrue(a.addTransition(19, '0', 16));
+        Assert.assertTrue(a.addTransition(19, '1', 22));
+        Assert.assertTrue(a.addTransition(22, '0', 16));
+        Assert.assertTrue(a.addTransition(22, '1', 19));
+        a.setStateInitial(7);
+        a.setStateFinal(22);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 6);
+        Assert.assertTrue(res.hasSymbol('0'));
+        Assert.assertTrue(res.hasSymbol('1'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NotMinimal1(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(7, 'a', 10));
+        Assert.assertTrue(a.addTransition(7, 'b', 13));
+        Assert.assertTrue(a.addTransition(10, 'a', 13));
+        Assert.assertTrue(a.addTransition(10, 'b', 16));
+        Assert.assertTrue(a.addTransition(13, 'a', 10));
+        Assert.assertTrue(a.addTransition(13, 'b', 19));
+        Assert.assertTrue(a.addTransition(16, 'a', 19));
+        Assert.assertTrue(a.addTransition(16, 'b', 22));
+        Assert.assertTrue(a.addTransition(19, 'a', 16));
+        Assert.assertTrue(a.addTransition(19, 'b', 22));
+        Assert.assertTrue(a.addTransition(22, 'a', 22));
+        Assert.assertTrue(a.addTransition(22, 'b', 22));
+        a.setStateInitial(7);
+        a.setStateFinal(16);
+        a.setStateFinal(19);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 4);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NotMinimal2(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(7, 'a', 10));
+        Assert.assertTrue(a.addTransition(7, 'b', 13));
+        Assert.assertTrue(a.addTransition(10, 'a', 16));
+        Assert.assertTrue(a.addTransition(10, 'b', 16));
+        Assert.assertTrue(a.addTransition(13, 'a', 13));
+        Assert.assertTrue(a.addTransition(13, 'b', 13));
+        Assert.assertTrue(a.addTransition(16, 'a', 16));
+        Assert.assertTrue(a.addTransition(16, 'b', 16));
+        a.setStateInitial(7);
+        a.setStateFinal(10);
+        a.setStateFinal(16);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 3);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NotMinimal3(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(7, 'a', 22));
+        Assert.assertTrue(a.addTransition(7, 'b', 10));
+        Assert.assertTrue(a.addTransition(10, 'a', 19));
+        Assert.assertTrue(a.addTransition(10, 'b', 16));
+        Assert.assertTrue(a.addTransition(13, 'a', 13));
+        Assert.assertTrue(a.addTransition(13, 'b', 22));
+        Assert.assertTrue(a.addTransition(16, 'a', 16));
+        Assert.assertTrue(a.addTransition(16, 'b', 7));
+        Assert.assertTrue(a.addTransition(19, 'a', 10));
+        Assert.assertTrue(a.addTransition(19, 'b', 13));
+        Assert.assertTrue(a.addTransition(22, 'a', 22));
+        Assert.assertTrue(a.addTransition(22, 'b', 19));
+        a.setStateInitial(7);
+        a.setStateFinal(7);
+        a.setStateFinal(22);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 3);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NotMinimal4Buronfosse(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addState(25));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(7, 'a', 10));
+        Assert.assertTrue(a.addTransition(7, 'b', 13));
+        Assert.assertTrue(a.addTransition(10, 'a', 13));
+        Assert.assertTrue(a.addTransition(10, 'b', 16));
+        Assert.assertTrue(a.addTransition(13, 'a', 10));
+        Assert.assertTrue(a.addTransition(13, 'b', 19));
+        Assert.assertTrue(a.addTransition(16, 'a', 19));
+        Assert.assertTrue(a.addTransition(16, 'b', 22));
+        Assert.assertTrue(a.addTransition(19, 'a', 16));
+        Assert.assertTrue(a.addTransition(19, 'b', 22));
+        Assert.assertTrue(a.addTransition(22, 'a', 22));
+        Assert.assertTrue(a.addTransition(22, 'b', 22));
+        Assert.assertTrue(a.addTransition(25, 'a', 16));
+        Assert.assertTrue(a.addTransition(25, 'b', 22));
+        a.setStateInitial(7);
+        a.setStateFinal(16);
+        a.setStateFinal(19);
+        a.setStateFinal(25);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 4);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NotMinimal5Pirolley(){
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addState(19));
+        Assert.assertTrue(a.addState(22));
+        Assert.assertTrue(a.addState(25));
+        Assert.assertTrue(a.addState(28));
+        Assert.assertTrue(a.addState(31));
+        Assert.assertTrue(a.addState(34));
+        Assert.assertTrue(a.addState(37));  
+        Assert.assertTrue(a.addState(40));
+        Assert.assertTrue(a.addState(43));
+        Assert.assertTrue(a.addState(46));
+        Assert.assertTrue(a.addState(49));
+        Assert.assertTrue(a.addState(52));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addTransition(10, 'a', 13));
+        Assert.assertTrue(a.addTransition(13, 'c', 22));
+        Assert.assertTrue(a.addTransition(16, 'b', 19));
+        Assert.assertTrue(a.addTransition(19, 'c', 22));
+        Assert.assertTrue(a.addTransition(22, 'a', 22));
+        Assert.assertTrue(a.addTransition(22, 'b', 22));
+        Assert.assertTrue(a.addTransition(22, 'c', 22));
+        Assert.assertTrue(a.addTransition(22, 'c', 25));
+        Assert.assertTrue(a.addTransition(22, 'c', 31));
+        Assert.assertTrue(a.addTransition(25, 'a', 28));
+        Assert.assertTrue(a.addTransition(31, 'b', 34));
+        Assert.assertTrue(a.addTransition(37, 'a', 43));
+        Assert.assertTrue(a.addTransition(40, 'b', 43));
+        Assert.assertTrue(a.addTransition(43, 'c', 46));
+        Assert.assertTrue(a.addTransition(46, 'a', 49));
+        Assert.assertTrue(a.addTransition(46, 'b', 52));
+        a.setStateInitial(10);
+        a.setStateInitial(16);
+        a.setStateInitial(37);
+        a.setStateInitial(40);
+        a.setStateFinal(28);
+        a.setStateFinal(34);
+        a.setStateFinal(49);
+        a.setStateFinal(52);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 6);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertTrue(res.hasSymbol('c'));
+        Assert.assertEquals(res.countSymbols(), 3);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_EmptyRolletViprey(){
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertTrue(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 1);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_Leonard(){
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addTransition(13, 'a', 10));
+        Assert.assertTrue(a.addTransition(13, 'b', 16));
+        Assert.assertTrue(a.addTransition(16, 'a', 10));
+        a.setStateInitial(10);
+        a.setStateFinal(10);
+        a.setStateFinal(13);
+        a.setStateFinal(16);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 2);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertEquals(res.countSymbols(), 2);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_Gasca(){
+        Assert.assertTrue(a.addState(7));
+        Assert.assertTrue(a.addState(10));
+        Assert.assertTrue(a.addState(13));
+        Assert.assertTrue(a.addState(16));
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addTransition(7, 'a', 10));
+        Assert.assertTrue(a.addTransition(7, 'b', 10));
+        Assert.assertTrue(a.addTransition(7, 'c', 16));
+        Assert.assertTrue(a.addTransition(10, 'a', 10));
+        Assert.assertTrue(a.addTransition(10, 'b', 10));
+        Assert.assertTrue(a.addTransition(10, 'c', 10));
+        Assert.assertTrue(a.addTransition(13, 'a', 7));
+        Assert.assertTrue(a.addTransition(13, 'b', 13));
+        Assert.assertTrue(a.addTransition(13, 'c', 16));
+        Assert.assertTrue(a.addTransition(16, 'a', 16));
+        Assert.assertTrue(a.addTransition(16, 'b', 16));
+        Assert.assertTrue(a.addTransition(16, 'c', 16));
+        a.setStateInitial(7);
+        a.setStateFinal(10);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 3);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertTrue(res.hasSymbol('c'));
+        Assert.assertEquals(res.countSymbols(), 3);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NonAccessibleStateGasca(){
+        for(int i = 0; i < 4; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addTransition(0, 'a', 1));
+        Assert.assertTrue(a.addTransition(0, 'b', 1));
+        Assert.assertTrue(a.addTransition(0, 'c', 3));
+        Assert.assertTrue(a.addTransition(1, 'a', 1));
+        Assert.assertTrue(a.addTransition(1, 'b', 1));
+        Assert.assertTrue(a.addTransition(1, 'c', 1));
+        Assert.assertTrue(a.addTransition(2, 'a', 0));
+        Assert.assertTrue(a.addTransition(2, 'b', 2));
+        Assert.assertTrue(a.addTransition(2, 'c', 3));
+        Assert.assertTrue(a.addTransition(3, 'a', 3));
+        Assert.assertTrue(a.addTransition(3, 'b', 3));
+        Assert.assertTrue(a.addTransition(3, 'c', 3));
+        a.setStateInitial(0);
+        a.setStateFinal(1);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 3);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertTrue(res.hasSymbol('c'));
+        Assert.assertEquals(res.countSymbols(), 3);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+    @Test
+    public void createMinimalBrzozowski_NonAccessibleStatePereiraGehant(){
+        for(int i = 0; i < 4; ++i){
+            Assert.assertTrue(a.addState(i));
+        }
+
+        Assert.assertTrue(a.addSymbol('a'));
+        Assert.assertTrue(a.addSymbol('b'));
+        Assert.assertTrue(a.addSymbol('c'));
+        Assert.assertTrue(a.addSymbol('d'));
+        Assert.assertTrue(a.addTransition(0, 'a', 0));
+        Assert.assertTrue(a.addTransition(0, 'b', 0));
+        Assert.assertTrue(a.addTransition(0, 'c', 0));
+        a.setStateInitial(1);
+        a.setStateFinal(0);
+        a.setStateFinal(1);
+
+        Automate res = Automate.createMinimalBrzozowski(a);
+
+        Assert.assertTrue(res.isValid());
+        Assert.assertFalse(res.isLanguageEmpty());
+        Assert.assertEquals(res.countStates(), 2);
+        Assert.assertTrue(res.hasSymbol('a'));
+        Assert.assertTrue(res.hasSymbol('b'));
+        Assert.assertTrue(res.hasSymbol('c'));
+        Assert.assertTrue(res.hasSymbol('d'));
+        Assert.assertEquals(res.countSymbols(), 4);
+        Assert.assertTrue(res.isDeterministic());
+        Assert.assertTrue(res.isComplete());
+        Assert.assertTrue(equivalent(res, a));
+    }
+
+
 }
