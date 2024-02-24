@@ -37,22 +37,22 @@ public class testAutomate {
 
     @Test
     public void isValid_NoSymbolWithState(){
-        a.addState(0);
+        Assert.assertTrue(a.addState(0));
         Assert.assertFalse(a.isValid());
         Assert.assertTrue(a.hasState(0));
     }
 
     @Test
     public void isValid_WithSymbolNoState(){
-        a.addSymbol('a');
+        Assert.assertTrue(a.addSymbol('a'));
         Assert.assertFalse(a.isValid());
         Assert.assertTrue(a.hasSymbol('a'));
     }
 
     @Test
     public void isValid_WithSymbolWithState(){
-        a.addState(0);
-        a.addSymbol('a');
+        Assert.assertTrue(a.addState(0));
+        Assert.assertTrue(a.addSymbol('a'));
         Assert.assertTrue(a.isValid());
         Assert.assertTrue(a.hasState(0));
         Assert.assertTrue(a.hasSymbol('a'));
@@ -76,8 +76,8 @@ public class testAutomate {
     @Test
     public void addedSymbol_IsGraph(){
         int c = 0;
-        for(int i = 0; i < 256; ++i){
-            if(Character.isDefined(i) && !Character.isSpaceChar(i)){
+        for(int i = 1; i < 256; ++i){
+            if(Character.isDefined((char)i) && i >= 0x21 && i <= 0x7E){
                 Assert.assertTrue(a.addSymbol((char)i));
                 Assert.assertTrue(a.hasSymbol((char)i));
                 c++;
@@ -138,7 +138,7 @@ public class testAutomate {
     public void removedSymbol_AllCharacter(){
         int c = 0;
         for(int i = 0; i < 256; ++i){
-            if(Character.isDefined(i) && !Character.isSpaceChar(i)){
+            if(Character.isDefined(i) && !Character.isWhitespace(i)){
                 Assert.assertTrue(a.addSymbol((char)i));
                 Assert.assertTrue(a.hasSymbol((char)i));
                 c++;
@@ -153,7 +153,7 @@ public class testAutomate {
         Assert.assertEquals(a.countSymbols(), 94);
 
         for(int i = 0; i < 256; ++i){
-            if(Character.isDefined(i) && !Character.isSpaceChar(i)){
+            if(Character.isDefined(i) && !Character.isWhitespace(i)){
                 Assert.assertTrue(a.removeSymbol((char)i));
                 Assert.assertFalse(a.hasSymbol((char)i));
                 c--;

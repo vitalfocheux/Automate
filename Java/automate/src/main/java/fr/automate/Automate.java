@@ -1,21 +1,32 @@
 package fr.automate;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Automate {
     
     public static char Epsilon = '\0';
 
+    private Set<Character> alphabet;
+    private Set<Integer> states;
+    private Set<Integer> initialStates;
+    private Set<Integer> finalStates;
     public Automate() {
-        // TODO Auto-generated constructor stub
+        alphabet = new HashSet<>();
+        states = new HashSet<>();
+        initialStates = new HashSet<>();
+        finalStates = new HashSet<>();
     }
 
     public boolean isValid(){
-        return false;
+        return !alphabet.isEmpty() && !states.isEmpty();
     }
 
     public boolean addSymbol(char symbol){
-        return false;
+        if(!(Character.isDefined(symbol) && symbol >= 0x21 && symbol <= 0x7E) || symbol == Epsilon || alphabet.contains(symbol)){
+            return false;
+        }
+        return alphabet.add(symbol);
     }
 
     public boolean removeSymbol(char symbol){
@@ -23,15 +34,15 @@ public class Automate {
     }
 
     public boolean hasSymbol(char symbol){
-        return false;
+        return alphabet.contains(symbol);
     }   
 
     public long countSymbols(){
-        return 0;
+        return alphabet.size();
     }
 
     public boolean addState(int state){
-        return false;
+        return states.add(state);
     }
 
     public boolean removeState(int state){
@@ -39,25 +50,25 @@ public class Automate {
     }
 
     public boolean hasState(int state){
-        return false;
+        return states.contains(state);
     }
 
     public long countStates(){
-        return 0;
+        return states.size();
     }
 
     public void setStateInitial(int state){
     }
 
     public boolean isStateInitial(int state){
-        return false;
+        return initialStates.contains(state);
     }
 
     public void setStateFinal(int state){
     }
 
     public boolean isStateFinal(int state){
-        return false;
+        return finalStates.contains(state);
     }
 
     public boolean addTransition(int from, char symbol, int to){
