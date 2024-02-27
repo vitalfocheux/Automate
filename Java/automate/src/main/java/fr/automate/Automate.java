@@ -1,7 +1,9 @@
 package fr.automate;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Automate {
     
@@ -11,11 +13,14 @@ public class Automate {
     private Set<Integer> states;
     private Set<Integer> initialStates;
     private Set<Integer> finalStates;
+    private Map<Integer, Map<Character, Set<Integer>>> transitions;
+
     public Automate() {
         alphabet = new HashSet<>();
         states = new HashSet<>();
         initialStates = new HashSet<>();
         finalStates = new HashSet<>();
+        transitions = new HashMap<>();
     }
 
     public boolean isValid(){
@@ -30,7 +35,17 @@ public class Automate {
     }
 
     public boolean removeSymbol(char symbol){
-        return false;
+        if(!hasSymbol(symbol)){
+            return false;
+        }
+        for(int state : states){
+            for(char alpha : alphabet){
+                if(transitions.get(state).keySet().contains(alpha)){
+                    transitions.remove(state);
+                }
+            }
+        }
+        return alphabet.remove(symbol);
     }
 
     public boolean hasSymbol(char symbol){
@@ -46,7 +61,28 @@ public class Automate {
     }
 
     public boolean removeState(int state){
-        return false;
+        if(!hasState(state)){
+            return false;
+        }
+        if(initialStates.contains(state)){
+            initialStates.remove(state);
+        }
+        if(finalStates.contains(state)){
+            finalStates.remove(state);
+        }
+        for(int from : states){
+            if(transitions.keySet().contains(from)){
+                transitions.remove(state);
+            }
+            for(char alpha : alphabet){
+                for(int to : states){
+                    if(transitions.get(from).get(alpha).contains(to)){
+                        removeTransition(from, alpha, to);
+                    }
+                }
+            }
+        }
+        return states.remove(state);
     }
 
     public boolean hasState(int state){
@@ -72,7 +108,17 @@ public class Automate {
     }
 
     public boolean addTransition(int from, char symbol, int to){
-        return false;
+        if(!hasTransition(from, symbol, to)){
+            return false;
+        }
+        Map<Character, Set<Integer>> fromTransitions = transitions.get(from);
+        if(fromTransitions == null){
+            fromTransitions = new HashMap<>();
+            Set<Integer> symbolTransitions = new HashSet<>();
+            fromTransitions.put(symbol, symbolTransitions);
+            transitions.put(from, fromTransitions);
+        }
+        return true;
     }
 
     public boolean removeTransition(int from, char symbol, int to){
