@@ -1,2 +1,5 @@
 build/
 googletest/
+.vscode/
+target/
+Cargo.lock
