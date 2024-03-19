@@ -4,7 +4,18 @@ Ce projet a pour but de constituer un projet sur les Automates sur la plupart de
 
 ## Ruby
 
-```
+```shell
 gem install rspec
 rspec (dans le projet)
+```
+
+## Crystal
+
+```shell
+crystall spec
+```
+
+## Rust
+```shell
+cargo test
 ```
