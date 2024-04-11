@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
   build:
 
@@ -16,7 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    working-directory: Rust
+    - name: Change directory to Rust
+      run: cd Rust
     - name: Run build
       run: cargo build --verbose
     - name: Run tests
