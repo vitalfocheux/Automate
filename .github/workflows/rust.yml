@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Change directory to Rust
-      run: cd Rust
+      run: cd Rust/src
     - name: Build
       run: cargo build --verbose
     - name: Run tests
