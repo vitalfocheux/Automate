@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Change directory to Crystal
+    - name: Change directory to Rust
       run: cd Rust
     - name: Build
       run: cargo build --verbose
