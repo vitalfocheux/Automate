@@ -1,5 +1,8 @@
 mod automate;
 
+fn main() {
+}
+
 #[cfg(test)]
 mod tests {
     use crate::automate::Automate;
@@ -568,5 +571,167 @@ mod tests {
         assert!(!a.is_state_final(1));
         assert!(a.has_state(0));
         assert_eq!(1, a.count_states());
+    }
+
+    #[test]
+    fn test_add_transition_unknown_symbol() {
+        let mut a = Automate::new();
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(!a.add_transition(0, 'a', 1));
+
+        assert!(a.has_state(0));
+        assert!(a.has_state(1));
+        assert_eq!(2, a.count_states());
+        assert!(!a.has_symbol('a'));
+        assert_eq!(0, a.count_symbols());
+        assert!(!a.has_transition(0, 'a', 1));
+        assert_eq!(0, a.count_transitions());
+    }
+
+    #[test]
+    fn test_add_transition_unknown_origin() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(1));
+        assert!(!a.add_transition(0, 'a', 1));
+
+        assert!(!a.has_state(0));
+        assert!(a.has_state(1));
+        assert_eq!(1, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert_eq!(1, a.count_symbols());
+        assert!(!a.has_transition(0, 'a', 1));
+        assert_eq!(0, a.count_transitions());
+    }
+
+    #[test]
+    fn test_add_transition_unknown_target() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(!a.add_transition(0, 'a', 1));
+
+        assert!(a.has_state(0));
+        assert!(!a.has_state(1));
+        assert_eq!(1, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert_eq!(1, a.count_symbols());
+        assert!(!a.has_transition(0, 'a', 1));
+        assert_eq!(0, a.count_transitions());
+    }
+
+    #[test]
+    fn test_add_transition_one_transition() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, 'a', 1));
+
+        assert!(a.has_state(0));
+        assert!(a.has_state(1));
+        assert_eq!(2, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert_eq!(1, a.count_symbols());
+        assert!(a.has_transition(0, 'a', 1));
+        assert_eq!(1, a.count_transitions());
+    }
+
+    #[test]
+    fn test_add_transition_two_identical_transitions() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, 'a', 1));
+        assert!(!a.add_transition(0, 'a', 1));
+
+        assert!(a.has_state(0));
+        assert!(a.has_state(1));
+        assert_eq!(2, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert_eq!(1, a.count_symbols());
+        assert!(a.has_transition(0, 'a', 1));
+        assert_eq!(1, a.count_transitions());
+    }
+
+    #[test]
+    fn test_add_transition_same_origin_and_letter() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_state(2));
+        assert!(a.add_transition(0, 'a', 1));
+        assert!(a.add_transition(0, 'a', 2));
+
+        assert!(a.has_state(0));
+        assert!(a.has_state(1));
+        assert!(a.has_state(2));
+        assert_eq!(3, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert_eq!(1, a.count_symbols());
+        assert!(a.has_transition(0, 'a', 1));
+        assert!(a.has_transition(0, 'a', 2));
+        assert_eq!(2, a.count_transitions());
+    }
+
+    #[test]
+    fn test_add_transition_same_origin_and_destination() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_symbol('b'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, 'a', 1));
+        assert!(a.add_transition(0, 'b', 1));
+
+        assert!(a.has_state(0));
+        assert!(a.has_state(1));
+        assert_eq!(2, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert!(a.has_symbol('b'));
+        assert_eq!(2, a.count_symbols());
+        assert!(a.has_transition(0, 'a', 1));
+        assert!(a.has_transition(0, 'b', 1));
+        assert_eq!(2, a.count_transitions());
+    }
+
+    #[test]
+    fn test_add_transition_same_letter_and_destination() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_state(2));
+        assert!(a.add_transition(0, 'a', 2));
+        assert!(a.add_transition(1, 'a', 2));
+
+        assert!(a.has_state(0));
+        assert!(a.has_state(1));
+        assert!(a.has_state(2));
+        assert_eq!(3, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert_eq!(1, a.count_symbols());
+        assert!(a.has_transition(0, 'a', 2));
+        assert!(a.has_transition(1, 'a', 2));
+        assert_eq!(2, a.count_transitions());
+    }
+
+    #[test]
+    fn test_add_transition_epsilon() {
+        let mut a = Automate::new();
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, Automate::EPSILON, 1));
+
+        assert!(a.has_state(0));
+        assert!(a.has_state(1));
+        assert_eq!(2, a.count_states());
+        assert!(!a.has_symbol(Automate::EPSILON));
+        assert_eq!(0, a.count_symbols());
+        assert!(a.has_transition(0, Automate::EPSILON, 1));
+        assert_eq!(1, a.count_transitions());
     }
 }
