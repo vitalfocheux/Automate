@@ -734,4 +734,102 @@ mod tests {
         assert!(a.has_transition(0, Automate::EPSILON, 1));
         assert_eq!(1, a.count_transitions());
     }
+
+    #[test]
+    fn test_remove_transition_unknown_symbol() {
+        let mut a = Automate::new();
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(!a.remove_transition(0, 'a', 1));
+
+        assert!(a.has_state(0));
+        assert!(a.has_state(1));
+        assert_eq!(2, a.count_states());
+        assert!(!a.has_symbol('a'));
+        assert_eq!(0, a.count_symbols());
+        assert!(!a.has_transition(0, 'a', 1));
+        assert_eq!(0, a.count_transitions());
+    }
+
+    #[test]
+    fn test_remove_transition_unknown_origin() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(1));
+        assert!(!a.add_transition(0, 'a', 1));
+
+        assert!(!a.has_state(0));
+        assert!(a.has_state(1));
+        assert_eq!(1, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert_eq!(1, a.count_symbols());
+        assert!(!a.has_transition(0, 'a', 1));
+        assert_eq!(0, a.count_transitions());
+    }
+
+    #[test]
+    fn test_remove_transition_unknown_target() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(!a.add_transition(0, 'a', 1));
+
+        assert!(a.has_state(0));
+        assert!(!a.has_state(1));
+        assert_eq!(1, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert_eq!(1, a.count_symbols());
+        assert!(!a.has_transition(0, 'a', 1));
+        assert_eq!(0, a.count_transitions());
+    }
+
+    #[test]
+    fn test_remove_transition_empty() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(!a.remove_transition(0, 'a', 1));
+
+        assert!(a.has_state(0));
+        assert!(a.has_state(1));
+        assert_eq!(2, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert_eq!(1, a.count_symbols());
+        assert!(!a.has_transition(0, 'a', 1));
+        assert_eq!(0, a.count_transitions());
+    }
+
+    #[test]
+    fn test_remove_transition_one_transition() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_state(2));
+        assert!(a.add_transition(0, 'a', 1));
+        assert!(a.add_transition(0, 'a', 2));
+        assert!(a.remove_transition(0, 'a', 1));
+
+        assert!(a.has_state(0));
+        assert!(a.has_state(1));
+        assert!(a.has_state(2));
+        assert_eq!(3, a.count_states());
+        assert!(a.has_symbol('a'));
+        assert_eq!(1, a.count_symbols());
+        assert!(a.has_transition(0, 'a', 2));
+        assert!(!a.has_transition(0, 'a', 1));
+        assert_eq!(1, a.count_transitions());
+    }
+
+    #[test]
+    fn test_remove_transition_success() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, 'a', 1));
+        assert!(a.remove_transition(0, 'a', 1));
+        assert!(!a.has_transition(0, 'a', 1));
+    }
 }
