@@ -888,4 +888,20 @@ mod tests {
         assert!(a.add_transition(0, 'a', 1));
         assert!(a.has_transition(0, 'a', 1));
     }
+
+    #[test]
+    fn test_count_transition_empty() {
+        let mut a = Automate::new();
+        assert_eq!(0, a.count_transitions());
+    }
+
+    #[test]
+    fn test_count_transition_not_empty() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, 'a', 1));
+        assert_eq!(1, a.count_transitions());
+    }
 }
