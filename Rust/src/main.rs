@@ -832,4 +832,60 @@ mod tests {
         assert!(a.remove_transition(0, 'a', 1));
         assert!(!a.has_transition(0, 'a', 1));
     }
+
+    #[test]
+    fn test_has_transition_empty() {
+        let mut a = Automate::new();
+        assert!(!a.has_transition(0, 'a', 1));
+    }
+
+    #[test]
+    fn test_has_transition_dont_have_this_transition() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, 'a', 1));
+        assert!(!a.has_transition(1, 'a', 0));
+    }
+
+    #[test]
+    fn test_has_transition_dont_have_symbol() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, 'a', 1));
+        assert!(!a.has_transition(1, 'b', 0));
+    }
+
+    #[test]
+    fn test_has_transition_dont_have_state_from() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, 'a', 1));
+        assert!(!a.has_transition(2, 'a', 1));
+    }
+
+    #[test]
+    fn test_has_transition_dont_have_state_to() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, 'a', 1));
+        assert!(!a.has_transition(1, 'a', 2));
+    }
+
+    #[test]
+    fn test_has_transition_success() {
+        let mut a = Automate::new();
+        assert!(a.add_symbol('a'));
+        assert!(a.add_state(0));
+        assert!(a.add_state(1));
+        assert!(a.add_transition(0, 'a', 1));
+        assert!(a.has_transition(0, 'a', 1));
+    }
 }
