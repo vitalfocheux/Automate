@@ -1,4 +1,4 @@
-package fr.automate;
+package automate;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class testAutomate {
-    
+
     public String reverseString(String s) {
         return new StringBuilder(s).reverse().toString();
     }
@@ -17,7 +17,7 @@ public class testAutomate {
         return ((a1.isIncludedIn(a2)) && (a2.isIncludedIn(a1)));
     }
 
-    
+
 
     public boolean equivalentMirror(Automate a, Automate mirror){
         return ((a.isIncludedIn(Automate.createMirror(mirror))) && (Automate.createMirror(mirror).isIncludedIn(a)));
@@ -201,8 +201,8 @@ public class testAutomate {
         }
 
         Assert.assertTrue(a.hasTransition(1, 'b', 3));
-        Assert.assertTrue(a.hasTransition(2, 'b', 4)); 
-        Assert.assertTrue(a.hasTransition(3, 'b', 4));         
+        Assert.assertTrue(a.hasTransition(2, 'b', 4));
+        Assert.assertTrue(a.hasTransition(3, 'b', 4));
         Assert.assertFalse(a.hasTransition(0, 'a', 1));
         Assert.assertFalse(a.hasTransition(0, 'a', 2));
         Assert.assertFalse(a.hasTransition(0, 'a', 3));
@@ -556,7 +556,7 @@ public class testAutomate {
         Assert.assertTrue(a.addState(1));
         Assert.assertFalse(a.addTransition(0, 'a', 1));
 
-        
+
         Assert.assertTrue(a.hasState(0));
         Assert.assertTrue(a.hasState(1));
         Assert.assertEquals(a.countStates(), 2);
@@ -1269,7 +1269,7 @@ public class testAutomate {
         Assert.assertTrue(a.addTransition(4, 'b', 5));
         Assert.assertTrue(a.addTransition(5, 'a', 5));
         Assert.assertTrue(a.addTransition(5, 'b', 5));
-        
+
         Assert.assertTrue(a.isDeterministic());
 
         Assert.assertTrue(a.isValid());
@@ -1504,7 +1504,7 @@ public class testAutomate {
 
     @Test
     public void createComplete_WithMaxState(){
-        Assert.assertTrue(a.addState(0)); 
+        Assert.assertTrue(a.addState(0));
         Assert.assertTrue(a.addState(Integer.MAX_VALUE));
         Assert.assertTrue(a.addSymbol('a'));
         Assert.assertTrue(a.addSymbol('b'));
@@ -1547,7 +1547,7 @@ public class testAutomate {
 
     @Test
     public void createComplete_Flecy(){
-        Assert.assertTrue(a.addState(0));   
+        Assert.assertTrue(a.addState(0));
         Assert.assertTrue(a.addSymbol('a'));
         Assert.assertTrue(a.addSymbol('b'));
         a.setStateInitial(0);
@@ -2135,7 +2135,7 @@ public class testAutomate {
         Assert.assertTrue(a.addState(1));
 
         a.setStateInitial(0);
-        a.setStateFinal(0); 
+        a.setStateFinal(0);
         a.setStateFinal(1);
 
         Assert.assertTrue(a.addSymbol('a'));
@@ -2333,7 +2333,7 @@ public class testAutomate {
         Assert.assertTrue(a.addState(1));
 
         a.setStateInitial(0);
-        a.setStateFinal(0); 
+        a.setStateFinal(0);
         a.setStateFinal(1);
 
         Assert.assertTrue(a.addSymbol('a'));
@@ -2430,8 +2430,8 @@ public class testAutomate {
     @Test
     public void removeNonAccessibleStates_NoTransition(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
         a.setStateFinal(1);
@@ -2458,8 +2458,8 @@ public class testAutomate {
     @Test
     public void removeNonAccessibleStates_MultipleNoTransition(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addState(3));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
@@ -2490,8 +2490,8 @@ public class testAutomate {
     @Test
     public void removeNonAccessibleStates_NoTransitionWithInitialState(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
         a.setStateFinal(1);
@@ -2518,8 +2518,8 @@ public class testAutomate {
     @Test
     public void removeNonAccessibleStates_MultipleNoTransitionWithInitialState(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addState(3));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
@@ -2550,8 +2550,8 @@ public class testAutomate {
     @Test
     public void removeNonAccessibleStates_AllNoTransition(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addState(3));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
@@ -2582,8 +2582,8 @@ public class testAutomate {
     @Test
     public void removeNonAccessibleStates_NoInitialState(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateFinal(1);
         Assert.assertTrue(a.addTransition(0, 'a', 1));
@@ -2607,8 +2607,8 @@ public class testAutomate {
     @Test
     public void removeNonAccessibleStates_AllAccessibleState(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
         a.setStateFinal(1);
@@ -2635,8 +2635,8 @@ public class testAutomate {
     @Test
     public void removeNonAccessibleStates_InitialStateWithNoTransition(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
         a.setStateInitial(1);
@@ -2659,8 +2659,8 @@ public class testAutomate {
     @Test
     public void removeNonCoAccessibleStates_NoTransition(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
         a.setStateFinal(1);
@@ -2687,8 +2687,8 @@ public class testAutomate {
     @Test
     public void removeNonCoAccessibleStates_MultipleNoTransition(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addState(3));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
@@ -2719,8 +2719,8 @@ public class testAutomate {
     @Test
     public void removeNonCoAccessibleStates_NoTransitionWithFinalState(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
         a.setStateFinal(1);
@@ -2747,8 +2747,8 @@ public class testAutomate {
     @Test
     public void removeNonCoAccessibleStates_MultipleNoTransitionWithFinalState(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addState(3));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
@@ -2779,8 +2779,8 @@ public class testAutomate {
     @Test
     public void removeNonCoAccessibleStates_AllNoTransition(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addState(3));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
@@ -2811,8 +2811,8 @@ public class testAutomate {
     @Test
     public void removeNonCoAccessibleStates_NoFinalState(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
         Assert.assertTrue(a.addTransition(0, 'a', 1));
@@ -2837,8 +2837,8 @@ public class testAutomate {
     @Test
     public void removeNonCoAccessibleStates_AllCoAccessible(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
         a.setStateFinal(1);
@@ -2864,8 +2864,8 @@ public class testAutomate {
     @Test
     public void removeNonCoAccessibleStates_FinalStateWithNoTransition(){
         Assert.assertTrue(a.addState(0));
-        Assert.assertTrue(a.addState(1));  
-        Assert.assertTrue(a.addState(2)); 
+        Assert.assertTrue(a.addState(1));
+        Assert.assertTrue(a.addState(2));
         Assert.assertTrue(a.addSymbol('a'));
         a.setStateInitial(0);
         a.setStateInitial(1);
@@ -3558,7 +3558,7 @@ public class testAutomate {
         Assert.assertTrue(a.addTransition(0, 'a', 1));
         Assert.assertTrue(a.addTransition(1, 'a', 1));
         Assert.assertTrue(a.addTransition(1, 'b', 1));
-        a.setStateInitial(0);   
+        a.setStateInitial(0);
         a.setStateFinal(1);
 
         Automate res = Automate.createDeterministic(a);
@@ -3916,12 +3916,12 @@ public class testAutomate {
         Assert.assertTrue(a.addTransition(5, 'a', 3));
         a.setStateInitial(0);
         a.setStateFinal(0);
-        a.setStateFinal(3); 
+        a.setStateFinal(3);
 
         Automate res = Automate.createMinimalMoore(a);
 
         Assert.assertTrue(res.isValid());
-        Assert.assertFalse(res.isLanguageEmpty());  
+        Assert.assertFalse(res.isLanguageEmpty());
         Assert.assertEquals(res.countStates(), 7);
         Assert.assertTrue(res.hasSymbol('a'));
         Assert.assertTrue(res.hasSymbol('b'));
@@ -3941,7 +3941,7 @@ public class testAutomate {
         Assert.assertTrue(a.addSymbol('a'));
         Assert.assertTrue(a.addSymbol('b'));
         Assert.assertTrue(a.addTransition(0, 'a', 1));
-        Assert.assertTrue(a.addTransition(0, 'b', 2));  
+        Assert.assertTrue(a.addTransition(0, 'b', 2));
         Assert.assertTrue(a.addTransition(1, 'a', 2));
         Assert.assertTrue(a.addTransition(1, 'b', 3));
         Assert.assertTrue(a.addTransition(2, 'a', 1));
@@ -3964,7 +3964,7 @@ public class testAutomate {
         Assert.assertTrue(res.hasSymbol('b'));
         Assert.assertEquals(res.countSymbols(), 2);
         Assert.assertTrue(res.isDeterministic());
-        Assert.assertTrue(res.isComplete());    
+        Assert.assertTrue(res.isComplete());
         Assert.assertTrue(equivalent(res, a));
     }
 
@@ -4091,10 +4091,10 @@ public class testAutomate {
         Assert.assertTrue(a.addTransition(7, '0', 10));
         Assert.assertTrue(a.addTransition(7, '1', 13));
         Assert.assertTrue(a.addTransition(10, '0', 19));
-        Assert.assertTrue(a.addTransition(10, '1', 22));    
+        Assert.assertTrue(a.addTransition(10, '1', 22));
         Assert.assertTrue(a.addTransition(13, '0', 7));
         Assert.assertTrue(a.addTransition(13, '1', 7));
-        Assert.assertTrue(a.addTransition(16, '0', 22));    
+        Assert.assertTrue(a.addTransition(16, '0', 22));
         Assert.assertTrue(a.addTransition(16, '1', 19));
         Assert.assertTrue(a.addTransition(19, '0', 16));
         Assert.assertTrue(a.addTransition(19, '1', 22));
@@ -4282,7 +4282,7 @@ public class testAutomate {
         Assert.assertTrue(a.addState(28));
         Assert.assertTrue(a.addState(31));
         Assert.assertTrue(a.addState(34));
-        Assert.assertTrue(a.addState(37));  
+        Assert.assertTrue(a.addState(37));
         Assert.assertTrue(a.addState(40));
         Assert.assertTrue(a.addState(43));
         Assert.assertTrue(a.addState(46));
@@ -4557,7 +4557,7 @@ public class testAutomate {
         Assert.assertTrue(res.isComplete());
         Assert.assertTrue(equivalent(res, a));
     }
-    
+
     @Test
     public void createMinimalBrzozowski_NoFinalState(){
         for(int i = 0; i < 6; ++i){
@@ -4753,10 +4753,10 @@ public class testAutomate {
         Assert.assertTrue(a.addTransition(7, '0', 10));
         Assert.assertTrue(a.addTransition(7, '1', 13));
         Assert.assertTrue(a.addTransition(10, '0', 19));
-        Assert.assertTrue(a.addTransition(10, '1', 22));    
+        Assert.assertTrue(a.addTransition(10, '1', 22));
         Assert.assertTrue(a.addTransition(13, '0', 7));
         Assert.assertTrue(a.addTransition(13, '1', 7));
-        Assert.assertTrue(a.addTransition(16, '0', 22));    
+        Assert.assertTrue(a.addTransition(16, '0', 22));
         Assert.assertTrue(a.addTransition(16, '1', 19));
         Assert.assertTrue(a.addTransition(19, '0', 16));
         Assert.assertTrue(a.addTransition(19, '1', 22));
@@ -4943,7 +4943,7 @@ public class testAutomate {
         Assert.assertTrue(a.addState(28));
         Assert.assertTrue(a.addState(31));
         Assert.assertTrue(a.addState(34));
-        Assert.assertTrue(a.addState(37));  
+        Assert.assertTrue(a.addState(37));
         Assert.assertTrue(a.addState(40));
         Assert.assertTrue(a.addState(43));
         Assert.assertTrue(a.addState(46));

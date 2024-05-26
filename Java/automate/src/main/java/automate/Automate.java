@@ -1,4 +1,4 @@
-package fr.automate;
+package automate;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Automate {
-    
+
     public static char Epsilon = '\0';
 
     private Set<Character> alphabet;
@@ -50,7 +50,7 @@ public class Automate {
 
     public boolean hasSymbol(char symbol){
         return alphabet.contains(symbol);
-    }   
+    }
 
     public long countSymbols(){
         return alphabet.size();
