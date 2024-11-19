@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class Automate {
 
   Set<int> initialStates = {};
@@ -25,7 +27,7 @@ class Automate {
   }
 
   int countSymbols(){
-    return 0;
+    return alphabet.length;
   }
 
   bool addState(int state){
@@ -49,7 +51,7 @@ class Automate {
   }
 
   bool isStateInitial(int state){
-    return false;
+    return initialStates.contains(state);
   }
 
   void setStateFinal(int state){
@@ -57,7 +59,7 @@ class Automate {
   }
 
   bool isStateFinal(int state){
-    return false;
+    return finalStates.contains(state);
   }
 
   bool addTransition(int from, String alpha, int to){
@@ -76,11 +78,11 @@ class Automate {
     return 0;
   }
 
-  void prettyPrint(StringBuffer buffer){
+  void prettyPrint(IOSink sink){
 
   }
 
-  void dotPrint(StringBuffer buffer){
+  void dotPrint(IOSink sink){
 
   }
 
